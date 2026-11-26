@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>The Great Gobble Bee</title>
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Spelling Bee"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Musso Family Olympics · Spelling Bee</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root{--cran:#8e2a2a;--pump:#d9772b;--gold:#e8b04a;--cream:#fbf4e6;--bark:#3a2a1f;--s:1}
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&family=Doto:wght@600;800&display=swap" rel="stylesheet">
+<style id="theme">
+:root{--cran:#2b2118;--pump:#e8b04a;--gold:#e8b04a;--cream:#fbf4e6;--bark:#2b2118;--s:1}
 @media(min-width:900px){:root{--s:1.25}}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
@@ -39,6 +39,165 @@ table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px s
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.8}}
 .small{font-size:.75em}
 @media(prefers-reduced-motion:reduce){.rise,.conf{animation:none}}
+
+.fsbtn{width:auto;align-self:center;font-size:.6em;margin-top:6px}
+.dots{display:inline-flex;flex-wrap:wrap;gap:4px;vertical-align:middle;max-width:50vw}.dot{width:12px;height:12px;border-radius:50%;background:var(--gold);border:1px solid var(--bark);display:inline-block}
+.sr{position:absolute;left:-9999px}.hero{font-size:clamp(44px,13vw,72px)}html.tv .hero{font-size:9vw}
+html.tv body{font-size:max(3vw,28px)}html.tv #app{max-width:none;padding:2vh 5vw}
+html.tv button{min-height:9vh;border-radius:20px}
+html.tv .name{font-size:6vw!important}
+html.tv .hear{min-height:16vh}html.tv .card{font-size:1em}
+html.tv .bottom{max-width:none}html.tv .dot{width:1.6vw;height:1.6vw}
+html.tv .spell{font-size:4vw}
+html.tv .fsbtn{font-size:max(1.6vw,18px)}
+/* Musso Family Olympics · Thanksgiving 2026 · Spelling Bee
+   Theme: cinematic dark melt, clear glass with iridescent rim, dot-matrix numerals.
+   CSS only, no WebGL. Link AFTER the inline <style> in index.html. */
+
+
+:root{
+  --indigo:#1e1960; --violet:#7668ff; --lime:#dbf570; --paper:#f5f4f0; --ink:#1c1c1c;
+  --deep:#0b0a24; --mute:rgba(245,244,240,.78);
+  --rim:linear-gradient(135deg,rgba(255,255,255,.55),rgba(118,104,255,.55) 30%,rgba(219,245,112,.35) 55%,rgba(255,255,255,.12) 75%,rgba(118,104,255,.45));
+  --glass:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03) 55%,rgba(255,255,255,.06));
+}
+
+/* ---- backdrop: one smooth melt, linear layers only, no shapes ---- */
+html body{
+  color:var(--paper); font-family:Inter,system-ui,sans-serif;
+  background:
+    linear-gradient(200deg,rgba(118,104,255,.55) 0%,rgba(118,104,255,0) 42%),
+    linear-gradient(20deg,rgba(219,245,112,.10) 0%,rgba(219,245,112,0) 30%),
+    linear-gradient(180deg,#1e1960 0%,#151248 45%,#0b0a24 100%);
+  background-color:var(--deep);
+  background-size:140% 140%,140% 140%,100% 100%;
+  background-attachment:fixed;
+  animation:melt 28s ease-in-out infinite alternate;
+}
+@keyframes melt{from{background-position:0% 0%,100% 100%,0 0}to{background-position:60% 40%,40% 60%,0 0}}
+html body::before{opacity:.09;mix-blend-mode:overlay}
+
+/* ---- type ---- */
+html body .serif{font-family:Fraunces,Georgia,serif;font-weight:300;letter-spacing:-.025em;line-height:1.02}
+html body h1{color:var(--paper);font-weight:300;font-size:clamp(48px,14vw,64px);margin:.25em 0 .2em}
+html body .grow.center>h1::before{
+  content:"Musso Family Olympics \00B7  Thanksgiving 2026";
+  display:block;margin:0 auto 22px;width:max-content;max-width:100%;
+  font:500 13px/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--paper);
+  padding:11px 16px;border-radius:999px;border:1px solid transparent;
+  background:var(--glass) padding-box,var(--rim) border-box;
+}
+html body .grow.center>h1::after{
+  content:"Event: Spelling Bee";
+  display:block;margin-top:14px;font:italic 300 .42em/1.2 Fraunces,serif;color:var(--lime);letter-spacing:0;
+}
+html body p{color:var(--mute);line-height:1.4}
+html body .big{color:var(--paper)}
+html body .name{color:var(--paper);font-weight:300}
+html body .small{color:var(--mute);letter-spacing:.14em;text-transform:uppercase;font-size:.62em;font-weight:500}
+html body .card.small{text-transform:none;letter-spacing:0;font-size:.8em;line-height:1.6}
+html body .spell{color:var(--lime);letter-spacing:.28em;font-weight:300}
+
+/* dot-matrix numerals: level hero, scores */
+html body .small+.serif.big{font-family:Doto,ui-monospace,monospace;font-weight:800;font-size:calc(160px*var(--s))!important;color:var(--lime);letter-spacing:-.02em;line-height:1}
+html body .top{opacity:1;color:var(--mute);font-size:.68em;letter-spacing:.06em;align-items:center}
+html body .top span:last-child{font-family:Doto,monospace;font-weight:800;font-size:1.7em;color:var(--lime);letter-spacing:.02em}
+html body td:last-child{font-family:Doto,monospace;font-weight:800;font-size:1.5em;color:var(--lime)}
+html body td{border-bottom:1px dotted rgba(245,244,240,.25);padding:12px 4px}
+html body tr:first-child td:first-child{color:var(--paper);font-weight:600}
+
+/* ---- clear glass with iridescent rim (untinted; the dark melt carries contrast) ---- */
+html body button,html body .card,html body input[type=text]{
+  border:1.5px solid transparent;border-radius:24px;color:var(--paper);
+  background:var(--glass) padding-box,var(--rim) border-box;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 12px 30px -16px rgba(0,0,0,.6);
+  transition:transform .15s ease;
+}
+html body button{min-height:64px;font-weight:500;letter-spacing:.01em;border-radius:999px}
+html body button:active{transform:scale(.98)}
+html body .card{padding:18px 20px;line-height:1.45}
+html body input[type=text]{border-radius:20px}
+html body input.word{font-family:Fraunces,serif;font-weight:300;font-size:36px;min-height:80px;letter-spacing:.04em}
+
+/* one glowing central action: lime, ink text (~15:1) */
+html body button.primary{
+  background:linear-gradient(180deg,#e6fa94,#dbf570 60%,#c9e85a) padding-box,linear-gradient(180deg,#f4ffd0,#b5d443) border-box;
+  color:var(--ink);font-weight:600;
+  box-shadow:0 14px 40px -10px rgba(219,245,112,.45),inset 0 1px 0 rgba(255,255,255,.7);
+}
+/* hear: the hero capsule, violet melt, white text (~5:1 at its lightest stop) */
+html body button.hear{
+  min-height:104px;font-size:1.15em;font-weight:600;color:#fff;border-radius:32px;
+  background:linear-gradient(120deg,#6a5cf0,#4a3fd6 55%,#1e1960) padding-box,var(--rim) border-box;
+  box-shadow:0 18px 50px -14px rgba(118,104,255,.7),inset 0 1px 0 rgba(255,255,255,.35);
+}
+html body #slow{border-radius:32px}
+html body button.tog.on{background:linear-gradient(180deg,rgba(245,244,240,.96),rgba(245,244,240,.88)) padding-box,var(--rim) border-box;color:var(--ink)}
+html body button.ghost{background:none;border:0;box-shadow:none;color:var(--mute);min-height:48px;text-decoration:none;letter-spacing:.14em;text-transform:lowercase}
+html body .prow button{width:56px;min-height:56px;border-radius:20px}
+html body button:focus-visible,html body input:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+
+/* correct flash: soft lime-to-lavender melt, ink type */
+html body .wash{background:linear-gradient(160deg,rgba(219,245,112,.97),rgba(186,180,255,.97));color:var(--ink)}
+html body .wash .big{color:var(--ink)}
+
+/* confetti stays rectangles, recoloured to tokens */
+html body .conf:nth-child(odd){background:var(--lime)!important}
+html body .conf:nth-child(even){background:var(--violet)!important}
+
+/* ================= TV / present layout (AirPlay, ~10 ft) =================
+   Triggers on body.tv, or any landscape viewport >= 1280 wide. */
+@media (min-width:1280px) and (orientation:landscape){ html body{--tv:1} }
+html body.tv{--tv:1}
+
+@media (min-width:1280px) and (orientation:landscape){
+  html body #app{max-width:none;padding:3vw 6vw 3.5vw;font-size:3vw}
+  html body .top{
+    font-size:1.6vw;padding:1.2vw 2.4vw;border-radius:999px;border:2px solid transparent;
+    background:linear-gradient(160deg,rgba(11,10,36,.55),rgba(11,10,36,.35)) padding-box,var(--rim) border-box;
+  }
+  html body .top span:last-child{font-size:3.4vw}
+  html body h1{font-size:9vw}
+  html body .grow.center>h1::before{font-size:1.4vw;padding:1vw 1.8vw}
+  html body .name{font-size:5vw!important}
+  html body .big{font-size:12vw}
+  html body .small+.serif.big{font-size:22vw!important}
+  html body .spell{font-size:7vw}
+  html body p,html body .card{font-size:3vw}
+  html body .small{font-size:1.5vw}
+  html body .card{padding:2vw 2.6vw;border-radius:2.4vw;border-width:2px;background:linear-gradient(160deg,rgba(11,10,36,.5),rgba(11,10,36,.3)) padding-box,var(--rim) border-box}
+  html body .bottom{flex-direction:row;flex-wrap:wrap;gap:1.4vw}
+  html body .bottom>*{flex:1}
+  html body button{min-height:6.5vw;font-size:2.4vw;border-width:2px}
+  html body button.hear{min-height:9vw;font-size:3vw}
+  html body #slow{min-height:9vw!important}
+  html body td{font-size:3vw;padding:1vw .5vw}
+  html body td:last-child{font-size:4vw}
+  /* word for the room: the peek reveal becomes the 12vw hero; hidden until revealed */
+  html body button.ghost{font-size:1.6vw}
+  html body button.ghost:not(:empty){letter-spacing:.02em;text-transform:none}
+}
+html body.tv #app{max-width:none;padding:3vw 6vw 3.5vw;font-size:3vw}
+html body.tv .name{font-size:5vw!important}
+html body.tv .big{font-size:12vw}
+html body.tv .small+.serif.big{font-size:22vw!important}
+html body.tv button{min-height:6.5vw;font-size:2.4vw}
+html body.tv .top span:last-child{font-size:3.4vw}
+
+/* optional hooks the builder can add for TV: .tv-word (the revealed word) and .tv-board (scores strip) */
+html body .tv-word{font-family:Fraunces,serif;font-weight:300;font-size:max(12vw,64px);letter-spacing:-.03em;line-height:1;text-align:center;color:var(--paper)}
+html body .tv-word[hidden],html body .tv-word:empty{display:none}
+html body .tv-board{display:flex;gap:1.2vw;justify-content:center;flex-wrap:wrap;margin-bottom:2vw}
+html body .tv-board>*{
+  display:flex;align-items:baseline;gap:1vw;padding:.9vw 2vw;border-radius:999px;border:2px solid transparent;
+  background:linear-gradient(160deg,rgba(11,10,36,.5),rgba(11,10,36,.3)) padding-box,var(--rim) border-box;
+  font-size:max(3vw,18px);color:var(--paper)
+}
+html body .tv-board b{font-family:Doto,monospace;font-weight:800;font-size:1.3em;color:var(--lime)}
+html body .tv-board .now{background:linear-gradient(160deg,rgba(118,104,255,.55),rgba(30,25,96,.6)) padding-box,var(--rim) border-box}
+
+@media(prefers-reduced-motion:reduce){html body{animation:none}}
+
 </style></head><body>
 <div id="app"></div>
 <script id="words" type="application/json">{
@@ -54,20 +213,20 @@ table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px s
    "easter_egg": ""
   },
   {
-   "word": "gravy",
+   "word": "garden",
    "level": 1,
-   "definition": "a warm sauce made from meat drippings",
-   "example": "Someone always pours way too much gravy on their mashed potatoes.",
-   "pronunciation": "GRAY-vee",
-   "theme": "thanksgiving"
+   "definition": "a piece of ground where flowers or vegetables are grown",
+   "example": "Water the garden before the sun gets hot.",
+   "pronunciation": "GAR-den",
+   "theme": "general"
   },
   {
-   "word": "pumpkin",
+   "word": "window",
    "level": 1,
-   "definition": "a big orange squash, also baked into pie",
-   "example": "The pumpkin pie disappeared before the football game ended.",
-   "pronunciation": "PUMP-kin",
-   "theme": "thanksgiving"
+   "definition": "an opening in a wall that lets in light and air",
+   "example": "Please open the window a little.",
+   "pronunciation": "WIN-doh",
+   "theme": "general"
   },
   {
    "word": "peach",
@@ -142,22 +301,20 @@ table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px s
    "easter_egg": "Southern side calls it dressing."
   },
   {
-   "word": "cranberry",
+   "word": "necessary",
    "level": 2,
-   "definition": "a tart red berry served as sauce",
-   "example": "Cranberry sauce still shaped like the can is a Thanksgiving tradition.",
-   "pronunciation": "KRAN-bair-ee",
-   "theme": "thanksgiving",
-   "easter_egg": ""
+   "definition": "needed; something you cannot do without",
+   "example": "Water is necessary for every living thing.",
+   "pronunciation": "NESS-uh-sair-ee",
+   "theme": "general"
   },
   {
-   "word": "casserole",
+   "word": "rhythm",
    "level": 2,
-   "definition": "a dish baked slowly in a deep pan",
-   "example": "A green bean casserole big enough to feed the whole Delta.",
-   "pronunciation": "KASS-uh-role",
-   "theme": "thanksgiving",
-   "easter_egg": ""
+   "definition": "a strong, regular pattern of beats or movement",
+   "example": "The drummer kept a steady rhythm.",
+   "pronunciation": "RITH-um",
+   "theme": "general"
   },
   {
    "word": "slough",
@@ -222,20 +379,20 @@ table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px s
    "theme": "general"
   },
   {
-   "word": "cornucopia",
+   "word": "conscience",
    "level": 3,
-   "definition": "a horn-shaped basket overflowing with food",
-   "example": "The cornucopia centerpiece spilled mini pumpkins everywhere.",
-   "pronunciation": "kor-nyoo-KOH-pee-uh",
-   "theme": "thanksgiving"
+   "definition": "your inner sense of right and wrong",
+   "example": "His conscience told him to return the wallet.",
+   "pronunciation": "KON-shuns",
+   "theme": "general"
   },
   {
-   "word": "marshmallow",
+   "word": "millennium",
    "level": 3,
-   "definition": "a soft, fluffy, sugary treat",
-   "example": "The sweet potatoes wore a blanket of toasted marshmallow.",
-   "pronunciation": "MARSH-mel-oh",
-   "theme": "thanksgiving"
+   "definition": "a period of one thousand years",
+   "example": "The millennium began on January 1, 2001.",
+   "pronunciation": "muh-LEN-ee-um",
+   "theme": "general"
   },
   {
    "word": "succotash",
@@ -310,12 +467,12 @@ table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px s
    "easter_egg": "Southern tree."
   },
   {
-   "word": "meringue",
+   "word": "idiosyncrasy",
    "level": 4,
-   "definition": "whipped egg whites and sugar, baked until fluffy",
-   "example": "The lemon pie wore a tall meringue hat.",
-   "pronunciation": "muh-RANG",
-   "theme": "thanksgiving"
+   "definition": "a habit or quirk that is peculiar to one person",
+   "example": "Humming while she reads is one of her idiosyncrasies.",
+   "pronunciation": "id-ee-oh-SIN-kruh-see",
+   "theme": "general"
   },
   {
    "word": "persimmon",
@@ -327,12 +484,12 @@ table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px s
    "easter_egg": "California fall fruit."
   },
   {
-   "word": "rutabaga",
+   "word": "onomatopoeia",
    "level": 4,
-   "definition": "a big yellow root vegetable, like a turnip",
-   "example": "Nobody admits to liking the rutabaga, but the bowl is always empty.",
-   "pronunciation": "ROO-tuh-bay-guh",
-   "theme": "thanksgiving"
+   "definition": "a word that sounds like the thing it names, such as buzz",
+   "example": "Buzz is an example of onomatopoeia.",
+   "pronunciation": "on-uh-mat-uh-PEE-uh",
+   "theme": "general"
   },
   {
    "word": "estuary",
@@ -397,13 +554,12 @@ table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px s
    "theme": "general"
   },
   {
-   "word": "hors d'oeuvre",
+   "word": "chiaroscuro",
    "level": 5,
-   "definition": "a small snack served before the main meal",
-   "example": "Too many hors d'oeuvres and you skip the turkey.",
-   "pronunciation": "or-DURV",
-   "theme": "thanksgiving",
-   "easter_egg": ""
+   "definition": "the contrast of light and dark in a painting",
+   "example": "The artist used chiaroscuro to make the face glow.",
+   "pronunciation": "kee-AR-uh-SKYOOR-oh",
+   "theme": "general"
   },
   {
    "word": "Worcestershire",
@@ -414,12 +570,12 @@ table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px s
    "theme": "thanksgiving"
   },
   {
-   "word": "bouillon",
+   "word": "pharaoh",
    "level": 5,
-   "definition": "a clear broth",
-   "example": "The stuffing gets a cup of chicken bouillon.",
-   "pronunciation": "BOOL-yahn",
-   "theme": "thanksgiving"
+   "definition": "a ruler of ancient Egypt",
+   "example": "The pharaoh was buried in a great pyramid.",
+   "pronunciation": "FAIR-oh",
+   "theme": "general"
   },
   {
    "word": "Mokelumne",
@@ -489,13 +645,18 @@ table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px s
 <script>
 "use strict";
 var WORDS=JSON.parse(document.getElementById('words').textContent).words;
-var LEVELS=['Appetizer','Side Dish','Main Course','Second Helping','Pumpkin Pie Boss'];
-var KEY='gobble-bee-2026';
+var LEVELS=['Warm-Up','Round Two','Round Three','Round Four','The Final Word'];
+var KEY='musso-bee-2026';
 var app=document.getElementById('app');
 var S=null;            // game state (persisted)
 var cfg={mode:'host',sudden:false};
 var ui={show:'',peek:false,names:[]};   // transient
 var voice=null;
+var TV=/[?&]tv=1/.test(location.search)||(window.innerWidth>=1000&&window.innerWidth>window.innerHeight);
+if(TV)document.documentElement.className='tv';
+window.addEventListener('DOMContentLoaded',function(){document.body.className='tv'});
+function dots(n){var s='';for(var i=0;i<n;i++)s+='<i class="dot"></i>';return '<span class="dots" aria-label="'+n+' points">'+s+'</span>'}
+function fullscreen(){var d=document,e=d.documentElement;try{if(d.fullscreenElement||d.webkitFullscreenElement){(d.exitFullscreen||d.webkitExitFullscreen).call(d)}else{(e.requestFullscreen||e.webkitRequestFullscreen).call(e)}}catch(err){console.warn('fullscreen not available',err)}}
 
 function $(h){var d=document.createElement('div');d.innerHTML=h;return d.firstElementChild}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -519,7 +680,7 @@ function say(text,rate){
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){console.warn('save failed',e)}}
 function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
 function newGame(names){
-  S={mode:cfg.mode,sudden:cfg.sudden,screen:'intro',level:1,turn:0,
+  S={mode:TV?'host':cfg.mode,sudden:cfg.sudden,screen:'intro',level:1,turn:0,
      players:names.map(function(n){return{name:n,score:0,misses:0,out:false,best:null}}),pool:[],last:null};
   buildPool();save();
 }
@@ -531,7 +692,8 @@ function buildPool(){
 }
 function cur(){return S.pool[S.turn]}
 function curPlayer(){return S.players[S.turn%S.players.length]}
-function go(screen){S.screen=screen;ui.show='';ui.peek=false;save();render()}
+function reveal(){ui.revealed=true;render()}
+function go(screen){ui.revealed=false;S.screen=screen;ui.show='';ui.peek=false;save();render()}
 
 function nextTurn(){
   var total=S.players.length*2;
@@ -549,18 +711,19 @@ function answer(ok){
   else{p.misses++;if(S.sudden&&p.misses>=2)p.out=true}
   S.last={ok:ok,word:w.word,pts:w.level};
   S.screen='result';save();render();
-  if(ok)setTimeout(function(){if(S.screen==='result')afterResult()},900);
+  if(ok&&!TV)setTimeout(function(){if(S.screen==='result')afterResult()},900);
 }
 function afterResult(){
   if(cur().easter_egg)go('egg');else nextTurn();
 }
 
 /* views */
+function board2(){return '<div class="tv-board">'+S.players.map(function(q){return '<div'+(q===curPlayer()?' class="now"':'')+'>'+esc(q.name)+' <b>'+q.score+'</b></div>'}).join('')+'</div>'}
 function board(){
   var ps=S.players.slice().sort(function(a,b){return b.score-a.score});
   return '<table>'+ps.map(function(p){return'<tr><td>'+esc(p.name)+(p.out?' (out)':'')+'</td><td>'+p.score+'</td></tr>'}).join('')+'</table>';
 }
-function set(html,bind){app.innerHTML=html;bind&&bind()}
+function set(html,bind){app.innerHTML=html+(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen?'<button id="fs" class="ghost fsbtn" aria-label="Toggle fullscreen">Fullscreen</button>':'');on('fs',fullscreen);bind&&bind()}
 function on(id,fn){var e=document.getElementById(id);if(e)e.onclick=fn}
 
 function render(){
@@ -569,8 +732,8 @@ function render(){
 }
 function vStart(){
   var saved=load();
-  set('<div class="grow center"><div style="height:8vh"></div><h1 class="serif">The Great Gobble Bee</h1>'+
-   '<p>Five courses of words. One family. No mercy.</p></div>'+
+  set('<div class="grow center"><div style="height:8vh"></div><h1 class="serif"><span class="sr">Musso Family Olympics, Thanksgiving 2026. Spelling Bee</span></h1>'+
+   '<p>Five levels. Ten words each. Spell it out loud.</p></div>'+
    '<div class="bottom"><div class="row"><button id="mh" class="tog '+(cfg.mode==='host'?'on':'')+'">Host reads</button><button id="mt" class="tog '+(cfg.mode==='type'?'on':'')+'">Type it</button></div>'+
    '<button id="sd" class="tog '+(cfg.sudden?'on':'')+'">Sudden death: '+(cfg.sudden?'on':'off')+'</button>'+
    '<button id="go" class="primary">Start</button>'+
@@ -600,7 +763,7 @@ function vPlayers(){
   });
 }
 function vIntro(){
-  set('<div class="top"><span>The Great Gobble Bee</span></div><div class="grow center"><div style="height:8vh"></div><div class="small">LEVEL</div><div class="serif big" style="font-size:120px">'+S.level+'</div>'+
+  set('<div class="top"><span>Musso Family Olympics · Spelling Bee</span></div><div class="grow center"><div style="height:8vh"></div><div class="small">LEVEL</div><div class="serif big" style="font-size:120px">'+S.level+'</div>'+
    '<div class="serif name">'+LEVELS[S.level-1]+'</div><p>Each speller gets 2 words</p></div><div class="bottom"><button id="b" class="primary">Begin</button></div>',function(){
    on('b',function(){S.turn=0;while(S.sudden&&curPlayer().out)S.turn++;go('turn');autoHear()})});
 }
@@ -609,14 +772,14 @@ function vTurn(){
   var w=cur(),p=curPlayer(),total=S.players.length*2,host=S.mode==='host';
   var shown=ui.show==='def'?esc(w.definition):ui.show==='sen'?esc(w.example):ui.show==='pro'?'Say it like: '+esc(w.pronunciation):'';
   set('<div class="top"><span>Level '+S.level+' of 5 · word '+(S.turn+1)+'/'+total+'</span><span>Score '+p.score+'</span></div>'+
-   '<div class="serif name center" style="margin:10px 0 4px;font-size:calc(40px*var(--s))">'+esc(p.name)+', you\'re up.</div>'+
+   (TV?board2():'')+'<div class="serif name center" style="margin:10px 0 4px;font-size:calc(40px*var(--s))">'+esc(p.name)+', you\'re up.</div>'+
    '<div class="grow"></div>'+
-   '<div class="row"><button id="hear" class="hear" aria-label="Hear the word">&#128266; Hear the word</button><button id="slow" style="min-height:96px;flex:.5">Slow</button></div>'+
+   '<div class="row"><button id="hear" class="hear" aria-label="Hear the word">&#128266; Hear the word'+(TV?' (space)':'')+'</button><button id="slow" style="min-height:96px;flex:.5">Slower (L)</button></div>'+
    (shown?'<div class="card rise" id="txt">'+shown+'</div>':'')+
-   '<div class="row" style="margin-top:12px"><button id="def">Definition</button><button id="sen">Sentence</button></div>'+
+   '<div class="row" style="margin-top:12px"><button id="def">Definition'+(TV?' (D)':'')+'</button><button id="sen">Sentence'+(TV?' (S)':'')+'</button></div>'+
    '<div class="bottom">'+(host?
-     '<div class="row"><button id="wr" style="min-height:72px">Wrong</button><button id="ok" class="primary" style="min-height:72px">Correct</button></div>'+
-     '<button id="peek" class="ghost">'+(ui.peek?esc(w.word):'peek')+'</button>':
+     '<div class="row"><button id="wr" style="min-height:72px">Wrong'+(TV?' (W)':'')+'</button><button id="ok" class="primary" style="min-height:72px">Correct'+(TV?' (C)':'')+'</button></div>'+
+     (TV?'':'<button id="peek" class="ghost">'+(ui.peek?esc(w.word):'peek')+'</button>'):
      '<input id="ans" class="word" type="text" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" aria-label="Type the spelling"><button id="chk" class="primary">Check</button>')+'</div>',function(){
    on('hear',function(){say(w.word,.9)});on('slow',function(){say(w.word,.55)});
    on('def',function(){ui.show='def';say(w.definition,.9);vTurn()});
@@ -629,6 +792,14 @@ function vTurn(){
 }
 function vResult(){
   var L=S.last;
+  if(TV){
+    if(!ui.revealed){
+      set('<div class="grow center"><div class="small">'+esc(curPlayer().name)+'</div><div class="serif hero">'+(L.ok?'Correct +'+L.pts:'Not this time')+'</div></div><div class="bottom"><button id="rv" class="primary">Reveal (R)</button></div>',function(){on('rv',reveal)});
+    }else{
+      set('<div class="grow center rise"><div class="small">The word is</div><div class="serif tv-word">'+esc(L.word)+'</div><div class="serif spell">'+esc(L.word.split('').join(' '))+'</div></div><div class="bottom"><button id="n" class="primary">Next (space)</button></div>',function(){on('n',afterResult)});
+    }
+    return;
+  }
   if(L.ok){
     set('<div class="wash"><div class="serif big center">Yes! +'+L.pts+'</div></div>');
   }else{
@@ -641,14 +812,14 @@ function vEgg(){
    '<div class="serif big" style="margin:.2em 0">'+esc(w.word)+'</div><p style="font-size:1.25em">'+esc(w.easter_egg)+'</p></div><div class="bottom"><button id="n" class="primary">Ha! Next</button></div>',function(){on('n',nextTurn)});
 }
 function vLevelup(){
-  set('<div class="grow center"><div style="height:6vh"></div><div class="small">LEVEL '+S.level+' DONE</div><div class="serif big">Level '+(S.level+1)+': '+LEVELS[S.level]+'</div><div class="card" style="text-align:left">'+board()+'</div></div>'+
+  set('<div class="grow center"><div style="height:6vh"></div><div class="small">LEVEL '+S.level+' DONE</div><div class="serif hero">Level '+(S.level+1)+': '+LEVELS[S.level]+'</div><div class="card" style="text-align:left">'+board()+'</div></div>'+
    '<div class="bottom"><button id="n" class="primary">Next level</button></div>',function(){
    on('n',function(){S.level++;S.turn=0;buildPool();go('intro')})});
 }
 function vEnd(){
   var ps=S.players.slice().sort(function(a,b){return b.score-a.score});
   var top=ps[0].score,wins=ps.filter(function(p){return p.score===top}).map(function(p){return p.name});
-  set('<div class="grow center"><div class="small" style="margin-top:4vh">WINNER</div><div class="serif big">'+esc(wins.join(' & '))+'</div>'+
+  set('<div class="grow center"><div class="small" style="margin-top:4vh">WINNER</div><div class="serif hero">'+esc(wins.join(' & '))+'</div>'+
    '<div class="card" style="text-align:left">'+board()+'</div>'+
    '<div class="card small" style="text-align:left">'+ps.map(function(p){return esc(p.name)+': best word '+(p.best?esc(p.best.word)+' (L'+p.best.level+')':'none')}).join('<br>')+'</div></div>'+
    '<div class="bottom"><button id="again" class="primary">Play again (same players)</button><button id="new">New game</button></div>',function(){
@@ -663,6 +834,17 @@ function confetti(){
     d.style.left=Math.random()*100+'vw';d.style.background=c[i%2];d.style.animationDelay=(Math.random()*.4)+'s';
     document.body.appendChild(d);setTimeout(function(x){x.remove()},2100,d)}
 }
+document.addEventListener('keydown',function(e){
+  if(!S||e.metaKey||e.ctrlKey||e.altKey)return;
+  var tag=(e.target.tagName||'').toLowerCase();if(tag==='input')return;
+  var k=e.key.toLowerCase(),map={};
+  if(S.screen==='turn')map={' ':'hear','d':'def','s':'sen','c':'ok','w':'wr','l':'slow'};
+  else if(S.screen==='result')map={'r':'rv',' ':'n','enter':'n','n':'n'};
+  else map={' ':'n','enter':'n','n':'n','b':'b'};
+  var id=map[k];if(!id)return;
+  var el=document.getElementById(id)||(id==='n'&&document.getElementById('b'));
+  if(!el)return;e.preventDefault();if(document.activeElement)document.activeElement.blur();el.click();
+});
 if(!window.speechSynthesis){console.warn('speechSynthesis not available; text only')}
 vStart();
 </script></body></html>
