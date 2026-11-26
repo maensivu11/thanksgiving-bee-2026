@@ -433,6 +433,10 @@ html body input[type=text]{padding:var(--g1) var(--g2)!important}
  html body .tv-board>*{min-height:52px}
  html body .txtarea{min-height:96px}
 }
+html body #app[data-screen=result]>.grow,html body #app[data-screen=banner]>.grow,html body #app[data-screen=win]>.grow,html body #app[data-screen=twin]>.grow,html body #app[data-screen=end]>.grow{display:flex;flex-direction:column;justify-content:center}
+html body #app>.grow>div[style*="height"]{display:none}
+html body .small[style*="margin-top"]{margin-top:0!important}
+@media (min-width:1280px) and (orientation:landscape){html body .grow.center>h1::before{margin-bottom:120px!important}}
 </style></head><body>
 <div id="app"></div>
 <script id="words" type="application/json">{
