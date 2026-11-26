@@ -244,6 +244,26 @@ html body .tv-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(mi
 html body .tv-board>*{justify-content:center;padding:.6vw 1.2vw;font-size:clamp(16px,2.1vw,40px);min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 @media (min-width:1280px){html body .tv-board{grid-template-columns:repeat(auto-fit,minmax(16vw,1fr))}}
 
+/* classic bee: out tiles, banner, rules panel */
+html body .tv-board>.out{opacity:.38;filter:saturate(.4)}
+html body .tv-board>.out b{font-family:Manrope,system-ui,sans-serif;font-weight:500;font-size:.7em;color:var(--mute);letter-spacing:.04em}
+html body .rules{text-align:left}html body .rules p{margin:.5em 0;color:var(--paper)}
+html body .rules h2{font-family:Fraunces,Georgia,serif;font-weight:500;margin:.2em 0 .4em;font-size:1.3em}
+html body #undo{align-self:center;width:auto}
+@media (min-width:1280px) and (orientation:landscape){html body .card.rules{font-size:1.55vw;column-count:2;column-gap:3vw}html body .card.rules p{margin:.35em 0;font-size:1.55vw}html body .card.rules h2{font-size:2.2vw}html body .rules h2{break-after:avoid}}
+
+/* unslop pass: no colored glows, radius by size, no wide-tracked caps, no ambient loop */
+html body{animation:none}
+html body button.primary{box-shadow:0 10px 24px -14px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.45)}
+html body button.hear{box-shadow:0 10px 24px -14px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.2)}
+html body button,html body #slow{border-radius:16px}
+html body button.hear{border-radius:20px}
+html body .card{border-radius:20px}
+html body .tv-board>*{border-radius:12px}
+html body .small{text-transform:none;letter-spacing:.02em;font-size:.72em}
+html body .grow.center>h1::before{text-transform:none;letter-spacing:.02em;border-radius:10px;font-size:14px}
+html body button.ghost{text-transform:none;letter-spacing:.01em}
+@media (min-width:1280px) and (orientation:landscape){html body .top{border-radius:16px}html body .card{border-radius:1.4vw}}
 @media(prefers-reduced-motion:reduce){html body{animation:none}}
 
 </style></head><body>
@@ -693,11 +713,11 @@ html body .tv-board>*{justify-content:center;padding:.6vw 1.2vw;font-size:clamp(
 <script>
 "use strict";
 var WORDS=JSON.parse(document.getElementById('words').textContent).words;
-var LEVELS=['Warm-Up','Round Two','Round Three','Round Four','The Final Word'];
+var LEVELS=['Warm-up','A bit harder','Tricky','Really tricky','The final word'];
 var KEY='musso-bee-2026';
 var app=document.getElementById('app');
 var S=null;            // game state (persisted)
-var cfg={mode:'host',sudden:false};
+var cfg={mode:'host',sudden:false,game:'classic'};
 var ui={show:'',peek:false,names:[]};   // transient
 var voice=null;
 var TV=/[?&]tv=1/.test(location.search)||(window.innerWidth>=1000&&window.innerWidth>window.innerHeight);
@@ -728,9 +748,10 @@ function say(text,rate){
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){console.warn('save failed',e)}}
 function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
 function newGame(names){
-  S={mode:TV?'host':cfg.mode,sudden:cfg.sudden,screen:'intro',level:1,turn:0,
-     players:names.map(function(n){return{name:n,score:0,misses:0,out:false,best:null}}),pool:[],last:null};
-  buildPool();save();
+  S={game:cfg.game,mode:TV?'host':cfg.mode,sudden:cfg.sudden,screen:'intro',level:1,turn:0,
+     players:names.map(function(n){return{name:n,score:0,misses:0,out:false,best:null}}),pool:[],last:null,prev:null};
+  if(S.game==='classic'){S.used=[];S.round=0;cRound(true)}else buildPool();
+  save();
 }
 function buildPool(){
   var lw=WORDS.filter(function(w){return w.level===S.level});
@@ -738,12 +759,61 @@ function buildPool(){
   while(pool.length<need)pool=pool.concat(shuffle(lw));
   S.pool=pool.slice(0,Math.max(need,10));
 }
-function cur(){return S.pool[S.turn]}
-function curPlayer(){return S.players[S.turn%S.players.length]}
+function classic(){return S&&S.game==='classic'}
+function cur(){return classic()?S.cw:S.pool[S.turn]}
+function curPlayer(){return classic()?S.players[S.cp]:S.players[S.turn%S.players.length]}
+
+/* classic bee */
+function pick(){
+  var used=S.used,l,c=[];
+  for(l=S.level;l<=5;l++){
+    c=WORDS.filter(function(w){return w.level===l&&used.indexOf(w.word)<0});
+    if(c.length){S.level=l;break}
+  }
+  if(!c.length)c=WORDS.filter(function(w){return used.indexOf(w.word)<0});
+  if(!c.length){S.used=[];used=S.used;c=WORDS.filter(function(w){return !S.cw||w.word!==S.cw.word})}
+  var w=c[Math.floor(Math.random()*c.length)];used.push(w.word);return w;
+}
+function inIdx(){var a=[];S.players.forEach(function(p,i){if(!p.out)a.push(i)});return a}
+function cRound(first){
+  var a=inIdx();
+  if(a.length===1){S.winner=a[0];S.screen='win';return}
+  if(!first)S.level=Math.min(5,S.level+1);
+  S.round++;S.order=a;S.ri=0;S.miss=[];S.fin=null;S.cp=a[0];S.cw=pick();S.screen='intro';
+}
+function banner(title,text,then){S.banner={title:title,text:text,then:then};go('banner')}
+function cAdvance(){
+  var L=S.last,f=S.fin,me=S.players[S.cp];
+  if(f){
+    if(f.step==='match'&&L.ok){f.step='clinch';S.cw=pick();return banner(me.name+' got it','One more word to win.','turn')}
+    if(f.step==='clinch'&&L.ok){S.winner=S.cp;return go('win')}
+    S.order.forEach(function(i){S.players[i].out=false;S.players[i].outRound=null});S.fin=null;
+    return banner('Both stay in',f.step==='match'?'You both missed that word, so the bee goes on.':'So close. You both stay in and the bee goes on.','round');
+  }
+  if(!L.ok){S.miss.push(S.cp);me.out=true;me.outRound=S.round}
+  if(!L.ok&&S.order.length===2){
+    var other=S.order[0]===S.cp?S.order[1]:S.order[0];
+    S.fin={step:'match'};S.cp=other;
+    return banner(me.name+' missed','Now '+S.players[other].name+' spells the same word. Get it, then one more, and you win.','turn');
+  }
+  S.ri++;
+  if(S.ri<S.order.length){S.cp=S.order[S.ri];S.cw=pick();return go('turn')}
+  if(S.miss.length===S.order.length){
+    S.miss.forEach(function(i){S.players[i].out=false;S.players[i].outRound=null});
+    return banner('Everyone stays in','Every speller missed this round. In a real bee, that means nobody goes out.','round');
+  }
+  if(inIdx().length===1){S.winner=inIdx()[0];return go('win')}
+  if(S.miss.length)return banner('Round '+S.round+' done',S.miss.map(function(i){return S.players[i].name}).join(', ')+(S.miss.length>1?' are':' is')+' out. Nice try.','round');
+  return banner('Round '+S.round+' done','Everyone spelled their word. Next round is harder.','round');
+}
+function bannerNext(){var t=S.banner.then;if(t==='round'){cRound();save();render()}else go(t)}
+function undo(){if(!S||!S.prev)return;S=S.prev;S.prev=null;ui.revealed=false;ui.show='';ui.peek=false;save();render()}
+function undoBtn(){return S&&S.prev?'<button id="undo" class="ghost">Undo last tap'+(TV?' (U)':'')+'</button>':''}
 function reveal(){ui.revealed=true;render()}
 function go(screen){ui.revealed=false;S.screen=screen;ui.show='';ui.peek=false;save();render()}
 
 function nextTurn(){
+  if(classic())return cAdvance();
   var total=S.players.length;
   S.turn++;
   while(S.turn<total&&S.sudden&&curPlayer().out)S.turn++;
@@ -754,44 +824,61 @@ function nextTurn(){
   go('turn');
 }
 function answer(ok){
-  var w=cur(),p=curPlayer();
+  var w=cur(),p=curPlayer(),snap=JSON.parse(JSON.stringify(S));snap.prev=null;snap.screen='turn';S.prev=snap;
+  if(classic()){S.last={ok:ok,word:w.word,pts:0};S.screen='result';save();render();if(ok&&!TV)setTimeout(function(){if(S.screen==='result')afterResult()},900);return}
   if(ok){p.score+=w.level;if(!p.best||w.level>=p.best.level)p.best={word:w.word,level:w.level}}
   else{p.misses++;if(S.sudden&&p.misses>=2)p.out=true}
   S.last={ok:ok,word:w.word,pts:w.level};
   S.screen='result';save();render();
   if(ok&&!TV)setTimeout(function(){if(S.screen==='result')afterResult()},900);
 }
-function afterResult(){
-  if(cur().easter_egg)go('egg');else nextTurn();
-}
+function afterResult(){nextTurn()}
 
 /* views */
-function board2(){return '<div class="tv-board">'+S.players.map(function(q){return '<div'+(q===curPlayer()?' class="now"':'')+'>'+esc(q.name)+' <b>'+q.score+'</b></div>'}).join('')+'</div>'}
+function board2(){return '<div class="tv-board">'+S.players.map(function(q){var c=q.out&&classic()?'out':q===curPlayer()?'now':'';return '<div'+(c?' class="'+c+'"':'')+'>'+esc(q.name)+' <b>'+(classic()?(q.out?'out':''):q.score)+'</b></div>'}).join('')+'</div>'}
 function board(){
   var ps=S.players.slice().sort(function(a,b){return b.score-a.score});
   return '<table>'+ps.map(function(p){return'<tr><td>'+esc(p.name)+(p.out?' (out)':'')+'</td><td>'+p.score+'</td></tr>'}).join('')+'</table>';
 }
-function set(html,bind){app.innerHTML=html+(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen?'<button id="fs" class="ghost fsbtn" aria-label="Toggle fullscreen">Fullscreen</button>':'');on('fs',fullscreen);bind&&bind()}
+function set(html,bind){if(S&&S.prev&&/^(turn|result|banner|win|levelup|end)$/.test(S.screen))html=html.replace(/<\/div>$/,undoBtn()+'</div>');app.innerHTML=html+(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen?'<button id="fs" class="ghost fsbtn" aria-label="Toggle fullscreen">Fullscreen</button>':'');on('fs',fullscreen);bind&&bind()}
 function on(id,fn){var e=document.getElementById(id);if(e)e.onclick=fn}
 
 function render(){
-  var f={start:vStart,players:vPlayers,intro:vIntro,turn:vTurn,result:vResult,egg:vEgg,levelup:vLevelup,end:vEnd}[S?S.screen:'start'];
+  var f={start:vStart,players:vPlayers,intro:vIntro,turn:vTurn,result:vResult,levelup:vLevelup,end:vEnd,banner:vBanner,win:vWin}[S?S.screen:'start'];
   window.scrollTo(0,0);f();
+  if(S&&S.prev)on('undo',undo);
 }
 function vStart(){
   var saved=load();
   set('<div class="grow center"><div style="height:8vh"></div><h1 class="serif"><span class="sr">Musso Family Olympics, Thanksgiving 2026. Spelling Bee</span></h1>'+
-   '<p>Five levels. Ten words each. Spell it out loud.</p></div>'+
-   '<div class="bottom"><div class="row"><button id="mh" class="tog '+(cfg.mode==='host'?'on':'')+'">Host reads</button><button id="mt" class="tog '+(cfg.mode==='type'?'on':'')+'">Type it</button></div>'+
-   '<button id="sd" class="tog '+(cfg.sudden?'on':'')+'">Sudden death: '+(cfg.sudden?'on':'off')+'</button>'+
-   '<button id="go" class="primary">Start</button>'+
+   '<p>'+(cfg.game==='classic'?'One word per turn. Miss and you\'re out. Last speller standing wins.':'Five levels, one word each per level. Harder words score more.')+'</p></div>'+
+   '<div class="bottom"><div class="row"><button id="gc" class="tog '+(cfg.game==='classic'?'on':'')+'">Classic bee</button><button id="gp" class="tog '+(cfg.game==='points'?'on':'')+'">Family points</button></div><div class="row"><button id="mh" class="tog '+(cfg.mode==='host'?'on':'')+'">Host reads</button><button id="mt" class="tog '+(cfg.mode==='type'?'on':'')+'">Type it</button></div>'+
+   (cfg.game==='points'?'<button id="sd" class="tog '+(cfg.sudden?'on':'')+'">Sudden death: '+(cfg.sudden?'on':'off')+'</button>':'')+
+   '<button id="go" class="primary">Start</button><button id="how">How it works</button>'+
    (saved&&saved.screen&&saved.screen!=='end'?'<button id="res">Resume game</button>':'')+'</div>',function(){
    on('mh',function(){cfg.mode='host';S=null;vStart()});on('mt',function(){cfg.mode='type';S=null;vStart()});
    on('sd',function(){cfg.sudden=!cfg.sudden;S=null;vStart()});
+   on('gc',function(){cfg.game='classic';S=null;vStart()});on('gp',function(){cfg.game='points';S=null;vStart()});
+   on('how',vRules);
    on('go',function(){S=null;ui.names=ui.names.length?ui.names:['Player 1','Player 2'];vPlayers()});
    on('res',function(){S=saved;speechPrime();render()});
   });
   S=null;
+}
+function vRules(){
+  S=null;
+  set('<div class="grow"><div class="card rules" id="rules"><h2 class="serif">Classic bee</h2>'+
+   '<p>Spellers take turns in the same order. One word per turn.</p>'+
+   '<p>Before you spell, you can hear the word again, ask for the definition, or hear it in a sentence.</p>'+
+   '<p>Miss a word and you\'re out. Your tile goes dim and we skip you after that.</p>'+
+   '<p>If everyone left misses in the same round, nobody goes out.</p>'+
+   '<p>Words start easy and get harder each round.</p>'+
+   '<p>Down to two? If one misses, the other has to spell that same word, then one more, to win. Miss either one and you both stay in.</p>'+
+   '<p>Last speller standing wins.</p>'+
+   '<h2 class="serif" style="margin-top:.8em">Family points</h2>'+
+   '<p>Everyone spells one word per level, for five levels. A correct word scores its level number. Most points wins.</p>'+
+   '<p>Tapped the wrong button? Hit Undo last tap.</p></div></div>'+
+   '<div class="bottom"><button id="back" class="primary">Got it</button></div>',function(){on('back',vStart)});
 }
 function speechPrime(){if(window.speechSynthesis){var u=new SpeechSynthesisUtterance('');speechSynthesis.speak(u)}}
 function vPlayers(){
@@ -802,27 +889,30 @@ function vPlayers(){
    ui.names.forEach(function(n,i){
      var r=$('<div class="prow"><input type="text" aria-label="Player '+(i+1)+' name" value="'+esc(n)+'"><button aria-label="Remove player '+(i+1)+'">x</button></div>');
      r.firstChild.oninput=function(){ui.names[i]=this.value};
-     r.lastChild.onclick=function(){if(ui.names.length>1){ui.names.splice(i,1);vPlayers()}};
+     r.lastChild.onclick=function(){if(ui.names.length>(cfg.game==='classic'?2:1)){ui.names.splice(i,1);vPlayers()}};
      box.appendChild(r)});
    on('add',function(){if(ui.names.length<12){ui.names.push('Player '+(ui.names.length+1));vPlayers()}});
    on('eat',function(){
      var n=ui.names.map(function(x,i){return x.trim()||('Player '+(i+1))});
-     speechPrime();cfg.sudden=cfg.sudden;newGame(n);render()});
+     if(cfg.game==='classic'&&n.length<2)n.push('Player 2');
+     speechPrime();newGame(n);render()});
   });
 }
 function vIntro(){
-  set('<div class="top"><span>Musso Family Olympics · Spelling Bee</span></div><div class="grow center"><div style="height:8vh"></div><div class="small">LEVEL</div><div class="serif big" style="font-size:120px">'+S.level+'</div>'+
-   '<div class="serif name">'+LEVELS[S.level-1]+'</div><p>Each speller gets 1 word</p></div><div class="bottom"><button id="b" class="primary">Begin</button></div>',function(){
-   on('b',function(){S.turn=0;while(S.sudden&&curPlayer().out)S.turn++;go('turn');autoHear()})});
+  set('<div class="top"><span>Musso Family Olympics · Spelling Bee</span></div><div class="grow center"><div style="height:8vh"></div><div class="small">Level</div><div class="serif big" style="font-size:120px">'+S.level+'</div>'+
+   '<div class="serif name">'+LEVELS[S.level-1]+'</div><p>'+(classic()?'Round '+S.round+'. '+S.order.length+' spellers left.':'Everyone spells one word.')+'</p></div><div class="bottom"><button id="b" class="primary">Begin</button></div>',function(){
+   on('b',function(){if(classic()){go('turn');return autoHear()}S.turn=0;while(S.sudden&&curPlayer().out)S.turn++;go('turn');autoHear()})});
 }
 function autoHear(){setTimeout(function(){if(S&&S.screen==='turn')say(cur().word,.9)},250)}
 function vTurn(){
   var w=cur(),p=curPlayer(),total=S.players.length,host=S.mode==='host';
   var shown=ui.show==='def'?esc(w.definition):ui.show==='sen'?esc(w.example):ui.show==='pro'?'Say it like: '+esc(w.pronunciation):'';
-  set('<div class="top"><span>Level '+S.level+' of 5 · word '+(S.turn+1)+'/'+total+'</span><span>Score '+p.score+'</span></div>'+
-   (TV?board2():'')+'<div class="serif name center" style="margin:10px 0 4px;font-size:calc(40px*var(--s))">'+esc(p.name)+', you\'re up.</div>'+
+  var head=classic()?'<div class="top"><span>Round '+S.round+' · Level '+S.level+(S.fin?(S.fin.step==='clinch'?' · winning word':' · same word'):'')+'</span><span>'+inIdx().length+' in</span></div>':
+   '<div class="top"><span>Level '+S.level+' of 5 · word '+(S.turn+1)+'/'+total+'</span><span>Score '+p.score+'</span></div>';
+  set(head+
+   (TV||classic()?board2():'')+'<div class="serif name center" style="margin:10px 0 4px;font-size:calc(40px*var(--s))">'+esc(p.name)+', you\'re up.</div>'+
    '<div class="grow"></div>'+
-   '<div class="row"><button id="hear" class="hear" aria-label="Hear the word">&#128266; Hear the word'+(TV?' (space)':'')+'</button><button id="slow" style="min-height:96px;flex:.5">Slower (L)</button></div>'+
+   '<div class="row"><button id="hear" class="hear" aria-label="Hear the word">Hear the word'+(TV?' (space)':'')+'</button><button id="slow" style="min-height:96px;flex:.5">Slower (L)</button></div>'+
    (shown?'<div class="card rise" id="txt">'+shown+'</div>':'')+
    '<div class="row" style="margin-top:12px"><button id="def">Definition'+(TV?' (D)':'')+'</button><button id="sen">Sentence'+(TV?' (S)':'')+'</button></div>'+
    '<div class="bottom">'+(host?
@@ -842,36 +932,46 @@ function vResult(){
   var L=S.last;
   if(TV){
     if(!ui.revealed){
-      set('<div class="grow center"><div class="small">'+esc(curPlayer().name)+'</div><div class="serif hero">'+(L.ok?'Correct +'+L.pts:'Not this time')+'</div></div><div class="bottom"><button id="rv" class="primary">Reveal (R)</button></div>',function(){on('rv',reveal)});
+      set('<div class="grow center"><div class="small">'+esc(curPlayer().name)+'</div><div class="serif hero">'+(L.ok?(classic()?'Correct':'Correct +'+L.pts):'Not this time')+'</div></div><div class="bottom"><button id="rv" class="primary">Reveal (R)</button></div>',function(){on('rv',reveal)});
     }else{
       set('<div class="grow center rise"><div class="small">The word is</div><div class="serif tv-word">'+esc(L.word)+'</div><div class="serif spell">'+esc(L.word.split('').join(' '))+'</div></div><div class="bottom"><button id="n" class="primary">Next (space)</button></div>',function(){on('n',afterResult)});
     }
     return;
   }
   if(L.ok){
-    set('<div class="wash"><div class="serif big center">Yes! +'+L.pts+'</div></div>');
+    set('<div class="wash"><div class="serif big center">'+(classic()?'Correct':'Correct +'+L.pts)+'</div></div>');
   }else{
     set('<div class="grow center"><div style="height:12vh"></div><div class="serif big">So close</div><p>The word is</p><div class="serif spell">'+esc(L.word.split('').join(' '))+'</div></div><div class="bottom"><button id="n" class="primary">Next</button></div>',function(){on('n',afterResult)});
   }
 }
-function vEgg(){
-  var w=WORDS.filter(function(x){return x.word===S.last.word})[0];
-  set('<div class="grow center rise"><div style="height:10vh"></div><div class="small" style="letter-spacing:.15em;text-transform:uppercase">'+esc(w.theme)+'</div>'+
-   '<div class="serif big" style="margin:.2em 0">'+esc(w.word)+'</div><p style="font-size:1.25em">'+esc(w.easter_egg)+'</p></div><div class="bottom"><button id="n" class="primary">Ha! Next</button></div>',function(){on('n',nextTurn)});
-}
 function vLevelup(){
-  set('<div class="grow center"><div style="height:6vh"></div><div class="small">LEVEL '+S.level+' DONE</div><div class="serif hero">Level '+(S.level+1)+': '+LEVELS[S.level]+'</div><div class="card" style="text-align:left">'+board()+'</div></div>'+
+  set('<div class="grow center"><div style="height:6vh"></div><div class="small">Level '+S.level+' done</div><div class="serif hero">Level '+(S.level+1)+': '+LEVELS[S.level]+'</div><div class="card" style="text-align:left">'+board()+'</div></div>'+
    '<div class="bottom"><button id="n" class="primary">Next level</button></div>',function(){
    on('n',function(){S.level++;S.turn=0;buildPool();go('intro')})});
+}
+function vBanner(){
+  var b=S.banner;
+  set('<div class="grow center rise"><div style="height:4vh"></div>'+board2()+'<div class="serif hero" id="btitle">'+esc(b.title)+'</div><p style="font-size:1.1em">'+esc(b.text)+'</p></div>'+
+   '<div class="bottom"><button id="n" class="primary">Continue</button></div>',function(){on('n',bannerNext)});
+}
+function vWin(){
+  var w=S.players[S.winner],rest=S.players.filter(function(p){return p!==w}).sort(function(a,b){return (b.outRound||0)-(a.outRound||0)});
+  set('<div class="grow center"><div class="small" style="margin-top:4vh">Winner</div><div class="serif hero" id="winner">'+esc(w.name)+'</div><p>Last speller standing after '+S.round+' round'+(S.round>1?'s':'')+'.</p>'+
+   '<div class="card" style="text-align:left"><table>'+rest.map(function(p){return '<tr><td>'+esc(p.name)+'</td><td>'+(p.outRound?'out in round '+p.outRound:'')+'</td></tr>'}).join('')+'</table></div></div>'+
+   '<div class="bottom"><button id="again" class="primary">Play again with the same players</button><button id="new">New game</button></div>',function(){
+   on('again',function(){cfg.game='classic';newGame(S.players.map(function(p){return p.name}));render()});
+   on('new',function(){localStorage.removeItem(KEY);ui.names=[];S=null;vStart()});
+  });
+  confetti();
 }
 function vEnd(){
   var ps=S.players.slice().sort(function(a,b){return b.score-a.score});
   var top=ps[0].score,wins=ps.filter(function(p){return p.score===top}).map(function(p){return p.name});
-  set('<div class="grow center"><div class="small" style="margin-top:4vh">WINNER</div><div class="serif hero">'+esc(wins.join(' & '))+'</div>'+
+  set('<div class="grow center"><div class="small" style="margin-top:4vh">Winner</div><div class="serif hero">'+esc(wins.join(' & '))+'</div>'+
    '<div class="card" style="text-align:left">'+board()+'</div>'+
    '<div class="card small" style="text-align:left">'+ps.map(function(p){return esc(p.name)+': best word '+(p.best?esc(p.best.word)+' (L'+p.best.level+')':'none')}).join('<br>')+'</div></div>'+
-   '<div class="bottom"><button id="again" class="primary">Play again (same players)</button><button id="new">New game</button></div>',function(){
-   on('again',function(){newGame(S.players.map(function(p){return p.name}));render()});
+   '<div class="bottom"><button id="again" class="primary">Play again with the same players</button><button id="new">New game</button></div>',function(){
+   on('again',function(){cfg.game='points';newGame(S.players.map(function(p){return p.name}));render()});
    on('new',function(){localStorage.removeItem(KEY);ui.names=[];S=null;vStart()});
   });
   confetti();
@@ -886,6 +986,7 @@ document.addEventListener('keydown',function(e){
   if(!S||e.metaKey||e.ctrlKey||e.altKey)return;
   var tag=(e.target.tagName||'').toLowerCase();if(tag==='input')return;
   var k=e.key.toLowerCase(),map={};
+  if(k==='u'&&S.prev){e.preventDefault();return undo()}
   if(S.screen==='turn')map={' ':'hear','d':'def','s':'sen','c':'ok','w':'wr','l':'slow'};
   else if(S.screen==='result')map={'r':'rv',' ':'n','enter':'n','n':'n'};
   else map={' ':'n','enter':'n','n':'n','b':'b'};
