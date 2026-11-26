@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Spelling Bee"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Musso Family Olympics · Spelling Bee</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&family=Doto:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,0..100;1,9..144,300..800,0..100&family=Manrope:wght@400;500;600;700&family=Doto:wght@600;800&display=swap" rel="stylesheet">
 <style id="theme">
 :root{--cran:#2b2118;--pump:#e8b04a;--gold:#e8b04a;--cream:#fbf4e6;--bark:#2b2118;--s:1}
 @media(min-width:900px){:root{--s:1.25}}
@@ -195,6 +195,49 @@ html body .tv-board>*{
 }
 html body .tv-board b{font-family:Doto,monospace;font-weight:800;font-size:1.3em;color:var(--lime)}
 html body .tv-board .now{background:linear-gradient(160deg,rgba(118,104,255,.55),rgba(30,25,96,.6)) padding-box,var(--rim) border-box}
+
+/* ===== Thanksgiving autumn retheme + type (colors and fonts only) ===== */
+:root{
+  --indigo:#5a1220; --violet:#c4561c; --lime:#e0a23a; --paper:#f6ead8; --ink:#1e110b;
+  --deep:#1e110b; --mute:rgba(246,234,216,.82);
+  --rim:linear-gradient(135deg,rgba(246,234,216,.55),rgba(196,86,28,.55) 30%,rgba(224,162,58,.45) 55%,rgba(246,234,216,.12) 75%,rgba(90,18,32,.55));
+}
+html body{
+  font-family:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:
+    linear-gradient(200deg,rgba(196,86,28,.42) 0%,rgba(196,86,28,0) 45%),
+    linear-gradient(20deg,rgba(224,162,58,.20) 0%,rgba(224,162,58,0) 35%),
+    linear-gradient(180deg,#5a1220 0%,#3a140f 45%,#1e110b 100%);
+  background-color:var(--deep);
+  background-size:140% 140%,140% 140%,100% 100%;
+  background-attachment:fixed;
+}
+html body button,html body input[type=text]{font-family:Manrope,system-ui,sans-serif}
+html body .serif,html body h1,html body .big,html body .name,html body input.word,html body .tv-word{
+  font-family:Fraunces,Georgia,"Times New Roman",serif;font-weight:500;
+  font-optical-sizing:auto;font-variation-settings:"SOFT" 100;
+}
+html body .small+.serif.big{font-family:Doto,ui-monospace,monospace;font-weight:800;font-variation-settings:normal}
+html body .grow.center>h1::before{font-family:Manrope,system-ui,sans-serif}
+html body .grow.center>h1::after{font:italic 400 .42em/1.2 Fraunces,Georgia,serif;font-variation-settings:"SOFT" 100;color:var(--lime)}
+html body button.primary{
+  background:linear-gradient(180deg,#f0c060,#e0a23a 60%,#cf8f2a) padding-box,linear-gradient(180deg,#fae2a8,#b97a20) border-box;
+  color:var(--ink);box-shadow:0 14px 40px -10px rgba(224,162,58,.5),inset 0 1px 0 rgba(255,255,255,.6);
+}
+html body button.hear{
+  color:var(--paper);
+  background:linear-gradient(120deg,#a8461a,#7a2a1a 55%,#5a1220) padding-box,var(--rim) border-box;
+  box-shadow:0 18px 50px -14px rgba(196,86,28,.7),inset 0 1px 0 rgba(255,255,255,.3);
+}
+html body button.tog.on{background:linear-gradient(180deg,rgba(246,234,216,.96),rgba(246,234,216,.88)) padding-box,var(--rim) border-box;color:var(--ink)}
+html body td{border-bottom-color:rgba(246,234,216,.25)}
+html body .wash{background:linear-gradient(160deg,rgba(240,192,96,.97),rgba(246,218,170,.97));color:var(--ink)}
+@media (min-width:1280px) and (orientation:landscape){
+  html body .top{background:linear-gradient(160deg,rgba(30,17,11,.55),rgba(30,17,11,.35)) padding-box,var(--rim) border-box}
+  html body .card{background:linear-gradient(160deg,rgba(30,17,11,.5),rgba(30,17,11,.3)) padding-box,var(--rim) border-box}
+}
+html body .tv-board>*{background:linear-gradient(160deg,rgba(30,17,11,.5),rgba(30,17,11,.3)) padding-box,var(--rim) border-box}
+html body .tv-board .now{background:linear-gradient(160deg,rgba(196,86,28,.55),rgba(90,18,32,.6)) padding-box,var(--rim) border-box}
 
 @media(prefers-reduced-motion:reduce){html body{animation:none}}
 
