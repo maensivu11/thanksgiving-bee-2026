@@ -438,6 +438,8 @@ html body #app>.grow>div[style*="height"]{display:none}
 html body .small[style*="margin-top"]{margin-top:0!important}
 @media (min-width:1280px) and (orientation:landscape){html body .grow.center>h1::before{margin-bottom:120px!important}}
 @media (min-width:1280px) and (orientation:landscape){html body .grow.center>h1::after{padding-top:90px!important;font-size:150px!important}}
+@media (min-width:1000px) and (orientation:landscape){html body #app,html body.tv #app{max-width:1100px!important}html body .grow.center>h1::after{font-size:120px!important;white-space:nowrap}html body .grow.center>h1::before{margin-bottom:64px!important}}
+html body .grow.center>h1::after{white-space:nowrap}
 </style></head><body>
 <div id="app"></div>
 <script id="words" type="application/json">{
