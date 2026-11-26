@@ -239,6 +239,11 @@ html body .wash{background:linear-gradient(160deg,rgba(240,192,96,.97),rgba(246,
 html body .tv-board>*{background:linear-gradient(160deg,rgba(30,17,11,.5),rgba(30,17,11,.3)) padding-box,var(--rim) border-box}
 html body .tv-board .now{background:linear-gradient(160deg,rgba(196,86,28,.55),rgba(90,18,32,.6)) padding-box,var(--rim) border-box}
 
+/* many players: scoreboard as a wrapping grid, up to 5 per row */
+html body .tv-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(17vw,220px),1fr));gap:.8vw;max-width:100%;margin-bottom:1.2vw}
+html body .tv-board>*{justify-content:center;padding:.6vw 1.2vw;font-size:clamp(16px,2.1vw,40px);min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+@media (min-width:1280px){html body .tv-board{grid-template-columns:repeat(auto-fit,minmax(16vw,1fr))}}
+
 @media(prefers-reduced-motion:reduce){html body{animation:none}}
 
 </style></head><body>
@@ -729,7 +734,7 @@ function newGame(names){
 }
 function buildPool(){
   var lw=WORDS.filter(function(w){return w.level===S.level});
-  var need=S.players.length*2,pool=shuffle(lw);
+  var need=S.players.length,pool=shuffle(lw);
   while(pool.length<need)pool=pool.concat(shuffle(lw));
   S.pool=pool.slice(0,Math.max(need,10));
 }
@@ -739,7 +744,7 @@ function reveal(){ui.revealed=true;render()}
 function go(screen){ui.revealed=false;S.screen=screen;ui.show='';ui.peek=false;save();render()}
 
 function nextTurn(){
-  var total=S.players.length*2;
+  var total=S.players.length;
   S.turn++;
   while(S.turn<total&&S.sudden&&curPlayer().out)S.turn++;
   if(S.turn>=total||S.players.every(function(p){return p.out})){
@@ -799,7 +804,7 @@ function vPlayers(){
      r.firstChild.oninput=function(){ui.names[i]=this.value};
      r.lastChild.onclick=function(){if(ui.names.length>1){ui.names.splice(i,1);vPlayers()}};
      box.appendChild(r)});
-   on('add',function(){if(ui.names.length<10){ui.names.push('Player '+(ui.names.length+1));vPlayers()}});
+   on('add',function(){if(ui.names.length<12){ui.names.push('Player '+(ui.names.length+1));vPlayers()}});
    on('eat',function(){
      var n=ui.names.map(function(x,i){return x.trim()||('Player '+(i+1))});
      speechPrime();cfg.sudden=cfg.sudden;newGame(n);render()});
@@ -807,12 +812,12 @@ function vPlayers(){
 }
 function vIntro(){
   set('<div class="top"><span>Musso Family Olympics · Spelling Bee</span></div><div class="grow center"><div style="height:8vh"></div><div class="small">LEVEL</div><div class="serif big" style="font-size:120px">'+S.level+'</div>'+
-   '<div class="serif name">'+LEVELS[S.level-1]+'</div><p>Each speller gets 2 words</p></div><div class="bottom"><button id="b" class="primary">Begin</button></div>',function(){
+   '<div class="serif name">'+LEVELS[S.level-1]+'</div><p>Each speller gets 1 word</p></div><div class="bottom"><button id="b" class="primary">Begin</button></div>',function(){
    on('b',function(){S.turn=0;while(S.sudden&&curPlayer().out)S.turn++;go('turn');autoHear()})});
 }
 function autoHear(){setTimeout(function(){if(S&&S.screen==='turn')say(cur().word,.9)},250)}
 function vTurn(){
-  var w=cur(),p=curPlayer(),total=S.players.length*2,host=S.mode==='host';
+  var w=cur(),p=curPlayer(),total=S.players.length,host=S.mode==='host';
   var shown=ui.show==='def'?esc(w.definition):ui.show==='sen'?esc(w.example):ui.show==='pro'?'Say it like: '+esc(w.pronunciation):'';
   set('<div class="top"><span>Level '+S.level+' of 5 · word '+(S.turn+1)+'/'+total+'</span><span>Score '+p.score+'</span></div>'+
    (TV?board2():'')+'<div class="serif name center" style="margin:10px 0 4px;font-size:calc(40px*var(--s))">'+esc(p.name)+', you\'re up.</div>'+
