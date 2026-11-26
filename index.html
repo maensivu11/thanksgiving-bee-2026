@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Great Gobble Bee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--cran:#8e2a2a;--pump:#d9772b;--gold:#e8b04a;--cream:#fbf4e6;--bark:#3a2a1f;--s:1}
+@media(min-width:900px){:root{--s:1.25}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:Inter,system-ui,sans-serif;font-size:calc(22px*var(--s));color:var(--bark);background:linear-gradient(180deg,#fbf4e6 0%,#f3dfae 100%) fixed;min-height:100vh;min-height:100dvh}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+#app{position:relative;max-width:560px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:16px 18px calc(18px + env(safe-area-inset-bottom))}
+.serif{font-family:Fraunces,Georgia,serif;font-weight:800;line-height:1.05}
+.top{font-size:.8em;display:flex;justify-content:space-between;gap:8px;opacity:.85}
+.grow{flex:1}.bottom{display:flex;flex-direction:column;gap:12px;margin-top:auto;padding-top:14px}
+.row{display:flex;gap:12px}.row>*{flex:1}
+button{font:inherit;font-weight:600;min-height:64px;border-radius:14px;border:2px solid var(--bark);background:var(--cream);color:var(--bark);padding:10px 16px;cursor:pointer;width:100%}
+button.primary{background:var(--cran);border-color:var(--cran);color:var(--cream)}
+button.ghost{border-color:transparent;background:transparent;min-height:44px;text-decoration:underline;font-weight:400}
+button.tog.on{background:var(--bark);color:var(--cream)}
+button:focus-visible,input:focus-visible{outline:4px solid var(--pump);outline-offset:2px}
+h1{font-size:clamp(44px,13vw,56px);margin:.4em 0 .15em;color:var(--cran)}
+.big{font-size:calc(clamp(48px,15vw,72px)*var(--s)*.85)}
+.name{font-size:calc(40px*var(--s)*.9)}
+.card{background:var(--cream);border:2px solid rgba(58,42,31,.25);border-radius:16px;padding:14px 16px;margin:12px 0}
+.center{text-align:center}
+input[type=text]{font:inherit;width:100%;min-height:52px;border-radius:12px;border:2px solid var(--bark);background:var(--cream);color:var(--bark);padding:8px 12px}
+input.word{font-size:32px;min-height:72px;text-align:center}
+.prow{display:flex;gap:8px;margin:8px 0}.prow input{flex:1}.prow button{width:52px;min-height:52px;padding:0}
+.hear{min-height:96px;font-size:1.2em;background:var(--pump);border-color:var(--bark);color:var(--bark)}
+table{width:100%;border-collapse:collapse}td{padding:8px 4px;border-bottom:1px solid rgba(58,42,31,.2)}td:last-child{text-align:right;font-weight:600}
+.wash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(232,176,74,.92);z-index:9}
+.rise{animation:rise .4s ease-out}@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.spell{letter-spacing:.25em;font-size:1.3em}
+.conf{position:fixed;top:-20px;width:10px;height:16px;animation:fall 1.5s ease-in forwards;z-index:8}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.8}}
+.small{font-size:.75em}
+@media(prefers-reduced-motion:reduce){.rise,.conf{animation:none}}
+</style></head><body>
+<div id="app"></div>
+<script id="words" type="application/json">{
+ "event": "Family Thanksgiving Spelling Bee 2026-11-26",
+ "words": [
+  {
+   "word": "turkey",
+   "level": 1,
+   "definition": "the big roast bird at the center of the Thanksgiving table",
+   "example": "Carve the turkey slow and steady, like landing a lunar module.",
+   "pronunciation": "TUR-kee",
+   "theme": "thanksgiving",
+   "easter_egg": ""
+  },
+  {
+   "word": "gravy",
+   "level": 1,
+   "definition": "a warm sauce made from meat drippings",
+   "example": "Someone always pours way too much gravy on their mashed potatoes.",
+   "pronunciation": "GRAY-vee",
+   "theme": "thanksgiving"
+  },
+  {
+   "word": "pumpkin",
+   "level": 1,
+   "definition": "a big orange squash, also baked into pie",
+   "example": "The pumpkin pie disappeared before the football game ended.",
+   "pronunciation": "PUMP-kin",
+   "theme": "thanksgiving"
+  },
+  {
+   "word": "peach",
+   "level": 1,
+   "definition": "a soft, fuzzy, sweet summer fruit",
+   "example": "No peach beats a fresh Georgia peach.",
+   "pronunciation": "PEECH",
+   "theme": "georgia",
+   "easter_egg": "Georgia is the Peach State, and Griffin is a Georgia town."
+  },
+  {
+   "word": "pear",
+   "level": 1,
+   "definition": "a sweet fruit shaped like a teardrop",
+   "example": "Walnut Grove orchards grow pears that taste like candy.",
+   "pronunciation": "PAIR",
+   "theme": "delta",
+   "easter_egg": "The Delta around Walnut Grove and Courtland is famous for Bartlett pears."
+  },
+  {
+   "word": "levee",
+   "level": 1,
+   "definition": "a raised bank that keeps a river from flooding",
+   "example": "You can bike along the levee and wave at the boats.",
+   "pronunciation": "LEV-ee",
+   "theme": "delta",
+   "easter_egg": ""
+  },
+  {
+   "word": "rocket",
+   "level": 1,
+   "definition": "a vehicle that blasts into space",
+   "example": "A rocket needs a huge push to get off the ground.",
+   "pronunciation": "ROK-it",
+   "theme": "nasa",
+   "easter_egg": "NASA nod."
+  },
+  {
+   "word": "pasta",
+   "level": 1,
+   "definition": "Italian noodles of every shape",
+   "example": "There is always pasta at an Italian-American table, even on Thanksgiving.",
+   "pronunciation": "PAH-stuh",
+   "theme": "italian",
+   "easter_egg": "Italian-American table."
+  },
+  {
+   "word": "river",
+   "level": 1,
+   "definition": "a large, natural stream of flowing water",
+   "example": "The Sacramento River rolls right past Walnut Grove.",
+   "pronunciation": "RIV-er",
+   "theme": "sacramento",
+   "easter_egg": "Sacramento River."
+  },
+  {
+   "word": "orbit",
+   "level": 1,
+   "definition": "the curved path one object takes around another",
+   "example": "The kids orbit the dessert table all afternoon.",
+   "pronunciation": "OR-bit",
+   "theme": "nasa",
+   "easter_egg": "NASA nod."
+  },
+  {
+   "word": "stuffing",
+   "level": 2,
+   "definition": "seasoned bread mix cooked with or beside the turkey",
+   "example": "Is it stuffing or dressing? Down South they say dressing.",
+   "pronunciation": "STUFF-ing",
+   "theme": "thanksgiving",
+   "easter_egg": "Southern side calls it dressing."
+  },
+  {
+   "word": "cranberry",
+   "level": 2,
+   "definition": "a tart red berry served as sauce",
+   "example": "Cranberry sauce still shaped like the can is a Thanksgiving tradition.",
+   "pronunciation": "KRAN-bair-ee",
+   "theme": "thanksgiving",
+   "easter_egg": ""
+  },
+  {
+   "word": "casserole",
+   "level": 2,
+   "definition": "a dish baked slowly in a deep pan",
+   "example": "A green bean casserole big enough to feed the whole Delta.",
+   "pronunciation": "KASS-uh-role",
+   "theme": "thanksgiving",
+   "easter_egg": ""
+  },
+  {
+   "word": "slough",
+   "level": 2,
+   "definition": "a slow, marshy side channel of a river",
+   "example": "You can fish off a dock on the slough until the fog rolls in.",
+   "pronunciation": "SLEW (as said in the Delta)",
+   "theme": "delta",
+   "easter_egg": "Delta sloughs: Snodgrass, Steamboat, Georgiana. Say it 'slew' here."
+  },
+  {
+   "word": "tule",
+   "level": 2,
+   "definition": "a tall bulrush that grows in California marshes",
+   "example": "Tule fog is named after the tule reeds in the Delta marshes.",
+   "pronunciation": "TOO-lee",
+   "theme": "delta",
+   "easter_egg": "Tule fog, the Central Valley winter classic."
+  },
+  {
+   "word": "asparagus",
+   "level": 2,
+   "definition": "a green spear-shaped vegetable",
+   "example": "The Delta grows so much asparagus there is a whole festival for it.",
+   "pronunciation": "uh-SPAIR-uh-gus",
+   "theme": "delta",
+   "easter_egg": "Delta asparagus and the old Stockton Asparagus Festival."
+  },
+  {
+   "word": "lasagna",
+   "level": 2,
+   "definition": "layers of pasta, sauce, and cheese baked together",
+   "example": "Some tables put lasagna right next to the turkey.",
+   "pronunciation": "luh-ZAHN-yuh",
+   "theme": "italian",
+   "easter_egg": "Italian-American Thanksgiving."
+  },
+  {
+   "word": "astronaut",
+   "level": 2,
+   "definition": "a person trained to travel into space",
+   "example": "An astronaut trains for years before a launch.",
+   "pronunciation": "AS-truh-nawt",
+   "theme": "nasa",
+   "easter_egg": "NASA nod."
+  },
+  {
+   "word": "biscuit",
+   "level": 2,
+   "definition": "a small, flaky Southern bread",
+   "example": "Georgia biscuits need butter and honey, no exceptions.",
+   "pronunciation": "BIS-kit",
+   "theme": "georgia",
+   "easter_egg": "Southern roots."
+  },
+  {
+   "word": "harvest",
+   "level": 2,
+   "definition": "gathering the crops at the end of the season",
+   "example": "Thanksgiving began as a harvest feast.",
+   "pronunciation": "HAR-vest",
+   "theme": "general"
+  },
+  {
+   "word": "cornucopia",
+   "level": 3,
+   "definition": "a horn-shaped basket overflowing with food",
+   "example": "The cornucopia centerpiece spilled mini pumpkins everywhere.",
+   "pronunciation": "kor-nyoo-KOH-pee-uh",
+   "theme": "thanksgiving"
+  },
+  {
+   "word": "marshmallow",
+   "level": 3,
+   "definition": "a soft, fluffy, sugary treat",
+   "example": "The sweet potatoes wore a blanket of toasted marshmallow.",
+   "pronunciation": "MARSH-mel-oh",
+   "theme": "thanksgiving"
+  },
+  {
+   "word": "succotash",
+   "level": 3,
+   "definition": "a dish of corn and lima beans",
+   "example": "Succotash is a classic Southern Thanksgiving side.",
+   "pronunciation": "SUK-uh-tash",
+   "theme": "thanksgiving",
+   "easter_egg": "Southern side dish."
+  },
+  {
+   "word": "devilish",
+   "level": 3,
+   "definition": "mischievous in a playful way",
+   "example": "He gave a devilish grin and took the last slice of pie.",
+   "pronunciation": "DEV-uh-lish",
+   "theme": "general",
+   "easter_egg": "Required word."
+  },
+  {
+   "word": "tributary",
+   "level": 3,
+   "definition": "a smaller river that flows into a bigger one",
+   "example": "The American River is a tributary of the Sacramento.",
+   "pronunciation": "TRIB-yoo-tair-ee",
+   "theme": "delta",
+   "easter_egg": "Delta rivers feeding the Sacramento."
+  },
+  {
+   "word": "capitol",
+   "level": 3,
+   "definition": "the building where lawmakers meet",
+   "example": "The Capitol in Sacramento is open for tours.",
+   "pronunciation": "KAP-ih-tul (ends in -ol, the building)",
+   "theme": "sacramento",
+   "easter_egg": ""
+  },
+  {
+   "word": "zucchini",
+   "level": 3,
+   "definition": "a green summer squash",
+   "example": "Gardens always make more zucchini than anyone can eat.",
+   "pronunciation": "zoo-KEE-nee",
+   "theme": "italian",
+   "easter_egg": "Italian word."
+  },
+  {
+   "word": "trajectory",
+   "level": 3,
+   "definition": "the path something follows as it moves through the air or space",
+   "example": "Engineers calculate the trajectory of a rocket before launch.",
+   "pronunciation": "truh-JEK-tuh-ree",
+   "theme": "nasa",
+   "easter_egg": "NASA math."
+  },
+  {
+   "word": "pimento",
+   "level": 3,
+   "definition": "a sweet red pepper",
+   "example": "Pimento cheese sandwiches are a Georgia picnic staple.",
+   "pronunciation": "pih-MEN-toh",
+   "theme": "georgia",
+   "easter_egg": "Pimento cheese, Southern classic."
+  },
+  {
+   "word": "magnolia",
+   "level": 3,
+   "definition": "a tree with large, fragrant white flowers",
+   "example": "A magnolia tree shades many a Georgia porch.",
+   "pronunciation": "mag-NOH-lee-uh",
+   "theme": "georgia",
+   "easter_egg": "Southern tree."
+  },
+  {
+   "word": "meringue",
+   "level": 4,
+   "definition": "whipped egg whites and sugar, baked until fluffy",
+   "example": "The lemon pie wore a tall meringue hat.",
+   "pronunciation": "muh-RANG",
+   "theme": "thanksgiving"
+  },
+  {
+   "word": "persimmon",
+   "level": 4,
+   "definition": "an orange fruit that ripens in fall",
+   "example": "Persimmons from the backyard tree went into the bread.",
+   "pronunciation": "per-SIM-un",
+   "theme": "thanksgiving",
+   "easter_egg": "California fall fruit."
+  },
+  {
+   "word": "rutabaga",
+   "level": 4,
+   "definition": "a big yellow root vegetable, like a turnip",
+   "example": "Nobody admits to liking the rutabaga, but the bowl is always empty.",
+   "pronunciation": "ROO-tuh-bay-guh",
+   "theme": "thanksgiving"
+  },
+  {
+   "word": "estuary",
+   "level": 4,
+   "definition": "where a river meets the sea and fresh and salt water mix",
+   "example": "The Sacramento-San Joaquin Delta is the largest estuary on the West Coast of the Americas.",
+   "pronunciation": "ES-choo-air-ee",
+   "theme": "delta",
+   "easter_egg": "The Delta itself."
+  },
+  {
+   "word": "Sacramento",
+   "level": 4,
+   "definition": "California's capital city",
+   "example": "Sacramento was a Gold Rush boomtown before it was the capital.",
+   "pronunciation": "sak-ruh-MEN-toh",
+   "theme": "sacramento",
+   "easter_egg": "Home city and river."
+  },
+  {
+   "word": "gnocchi",
+   "level": 4,
+   "definition": "small soft Italian dumplings, often made with potato",
+   "example": "Leftover mashed potatoes can become gnocchi.",
+   "pronunciation": "NYOH-kee (silent g)",
+   "theme": "italian",
+   "easter_egg": "Italian word."
+  },
+  {
+   "word": "prosciutto",
+   "level": 4,
+   "definition": "thin-sliced Italian dry-cured ham",
+   "example": "A prosciutto platter makes a fine appetizer.",
+   "pronunciation": "pro-SHOO-toh",
+   "theme": "italian",
+   "easter_egg": "Italian word."
+  },
+  {
+   "word": "aeronautics",
+   "level": 4,
+   "definition": "the science of flight",
+   "example": "NASA stands for National Aeronautics and Space Administration.",
+   "pronunciation": "air-uh-NAW-tiks",
+   "theme": "nasa",
+   "easter_egg": "The A in NASA."
+  },
+  {
+   "word": "molasses",
+   "level": 4,
+   "definition": "a thick, dark syrup made from sugar cane",
+   "example": "Slow as molasses is a Southern saying.",
+   "pronunciation": "muh-LASS-iz",
+   "theme": "georgia",
+   "easter_egg": "Southern saying."
+  },
+  {
+   "word": "levitate",
+   "level": 4,
+   "definition": "to rise or float in the air",
+   "example": "After three plates, nobody could levitate off the couch.",
+   "pronunciation": "LEV-ih-tate",
+   "theme": "general"
+  },
+  {
+   "word": "hors d'oeuvre",
+   "level": 5,
+   "definition": "a small snack served before the main meal",
+   "example": "Too many hors d'oeuvres and you skip the turkey.",
+   "pronunciation": "or-DURV",
+   "theme": "thanksgiving",
+   "easter_egg": ""
+  },
+  {
+   "word": "Worcestershire",
+   "level": 5,
+   "definition": "a tangy, dark sauce used in cooking",
+   "example": "A dash of Worcestershire goes in the gravy.",
+   "pronunciation": "WUSS-ter-sher",
+   "theme": "thanksgiving"
+  },
+  {
+   "word": "bouillon",
+   "level": 5,
+   "definition": "a clear broth",
+   "example": "The stuffing gets a cup of chicken bouillon.",
+   "pronunciation": "BOOL-yahn",
+   "theme": "thanksgiving"
+  },
+  {
+   "word": "Mokelumne",
+   "level": 5,
+   "definition": "a river that flows into the Delta",
+   "example": "The Mokelumne River flows into the Delta.",
+   "pronunciation": "moh-KAHL-uh-mee",
+   "theme": "delta",
+   "easter_egg": ""
+  },
+  {
+   "word": "riparian",
+   "level": 5,
+   "definition": "relating to the banks of a river",
+   "example": "Riparian oaks line the sloughs near Locke.",
+   "pronunciation": "rih-PAIR-ee-un",
+   "theme": "delta",
+   "easter_egg": "Locke and the Delta riverbanks."
+  },
+  {
+   "word": "bureaucracy",
+   "level": 5,
+   "definition": "a system of government offices and rules",
+   "example": "Sacramento runs on coffee and bureaucracy.",
+   "pronunciation": "byoo-ROK-ruh-see",
+   "theme": "sacramento",
+   "easter_egg": "State capital joke."
+  },
+  {
+   "word": "mascarpone",
+   "level": 5,
+   "definition": "a soft, creamy Italian cheese",
+   "example": "Tiramisu needs mascarpone, not cream cheese.",
+   "pronunciation": "mas-kar-POH-nay",
+   "theme": "italian",
+   "easter_egg": "Italian dessert."
+  },
+  {
+   "word": "bruschetta",
+   "level": 5,
+   "definition": "grilled bread topped with tomato and garlic",
+   "example": "Bruschetta is a classic Italian appetizer.",
+   "pronunciation": "broo-SKET-tuh",
+   "theme": "italian",
+   "easter_egg": "Italian word."
+  },
+  {
+   "word": "rendezvous",
+   "level": 5,
+   "definition": "a planned meeting at a set time and place",
+   "example": "Apollo spacecraft had to rendezvous in lunar orbit to get home.",
+   "pronunciation": "RAHN-day-voo",
+   "theme": "nasa",
+   "easter_egg": "Apollo lunar orbit rendezvous, a NASA classic."
+  },
+  {
+   "word": "Chattahoochee",
+   "level": 5,
+   "definition": "a major Georgia river that runs through Atlanta",
+   "example": "The Chattahoochee River runs through Georgia.",
+   "pronunciation": "chat-uh-HOO-chee",
+   "theme": "georgia",
+   "easter_egg": "Georgia river, north of Griffin."
+  }
+ ]
+}</script>
+<script>
+"use strict";
+var WORDS=JSON.parse(document.getElementById('words').textContent).words;
+var LEVELS=['Appetizer','Side Dish','Main Course','Second Helping','Pumpkin Pie Boss'];
+var KEY='gobble-bee-2026';
+var app=document.getElementById('app');
+var S=null;            // game state (persisted)
+var cfg={mode:'host',sudden:false};
+var ui={show:'',peek:false,names:[]};   // transient
+var voice=null;
+
+function $(h){var d=document.createElement('div');d.innerHTML=h;return d.firstElementChild}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+/* speech */
+function pickVoice(){
+  if(!window.speechSynthesis)return;
+  var v=speechSynthesis.getVoices();
+  voice=v.filter(function(x){return x.lang==='en-US'||x.lang==='en_US'})[0]||v.filter(function(x){return /^en/.test(x.lang)})[0]||null;
+}
+if(window.speechSynthesis){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function say(text,rate){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(text);u.rate=rate||.9;u.lang='en-US';if(voice)u.voice=voice;
+  speechSynthesis.speak(u);
+}
+
+/* state */
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){console.warn('save failed',e)}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+function newGame(names){
+  S={mode:cfg.mode,sudden:cfg.sudden,screen:'intro',level:1,turn:0,
+     players:names.map(function(n){return{name:n,score:0,misses:0,out:false,best:null}}),pool:[],last:null};
+  buildPool();save();
+}
+function buildPool(){
+  var lw=WORDS.filter(function(w){return w.level===S.level});
+  var need=S.players.length*2,pool=shuffle(lw);
+  while(pool.length<need)pool=pool.concat(shuffle(lw));
+  S.pool=pool.slice(0,Math.max(need,10));
+}
+function cur(){return S.pool[S.turn]}
+function curPlayer(){return S.players[S.turn%S.players.length]}
+function go(screen){S.screen=screen;ui.show='';ui.peek=false;save();render()}
+
+function nextTurn(){
+  var total=S.players.length*2;
+  S.turn++;
+  while(S.turn<total&&S.sudden&&curPlayer().out)S.turn++;
+  if(S.turn>=total||S.players.every(function(p){return p.out})){
+    if(S.level>=5||S.players.every(function(p){return p.out}))return go('end');
+    return go('levelup');
+  }
+  go('turn');
+}
+function answer(ok){
+  var w=cur(),p=curPlayer();
+  if(ok){p.score+=w.level;if(!p.best||w.level>=p.best.level)p.best={word:w.word,level:w.level}}
+  else{p.misses++;if(S.sudden&&p.misses>=2)p.out=true}
+  S.last={ok:ok,word:w.word,pts:w.level};
+  S.screen='result';save();render();
+  if(ok)setTimeout(function(){if(S.screen==='result')afterResult()},900);
+}
+function afterResult(){
+  if(cur().easter_egg)go('egg');else nextTurn();
+}
+
+/* views */
+function board(){
+  var ps=S.players.slice().sort(function(a,b){return b.score-a.score});
+  return '<table>'+ps.map(function(p){return'<tr><td>'+esc(p.name)+(p.out?' (out)':'')+'</td><td>'+p.score+'</td></tr>'}).join('')+'</table>';
+}
+function set(html,bind){app.innerHTML=html;bind&&bind()}
+function on(id,fn){var e=document.getElementById(id);if(e)e.onclick=fn}
+
+function render(){
+  var f={start:vStart,players:vPlayers,intro:vIntro,turn:vTurn,result:vResult,egg:vEgg,levelup:vLevelup,end:vEnd}[S?S.screen:'start'];
+  window.scrollTo(0,0);f();
+}
+function vStart(){
+  var saved=load();
+  set('<div class="grow center"><div style="height:8vh"></div><h1 class="serif">The Great Gobble Bee</h1>'+
+   '<p>Five courses of words. One family. No mercy.</p></div>'+
+   '<div class="bottom"><div class="row"><button id="mh" class="tog '+(cfg.mode==='host'?'on':'')+'">Host reads</button><button id="mt" class="tog '+(cfg.mode==='type'?'on':'')+'">Type it</button></div>'+
+   '<button id="sd" class="tog '+(cfg.sudden?'on':'')+'">Sudden death: '+(cfg.sudden?'on':'off')+'</button>'+
+   '<button id="go" class="primary">Start</button>'+
+   (saved&&saved.screen&&saved.screen!=='end'?'<button id="res">Resume game</button>':'')+'</div>',function(){
+   on('mh',function(){cfg.mode='host';S=null;vStart()});on('mt',function(){cfg.mode='type';S=null;vStart()});
+   on('sd',function(){cfg.sudden=!cfg.sudden;S=null;vStart()});
+   on('go',function(){S=null;ui.names=ui.names.length?ui.names:['Player 1','Player 2'];vPlayers()});
+   on('res',function(){S=saved;speechPrime();render()});
+  });
+  S=null;
+}
+function speechPrime(){if(window.speechSynthesis){var u=new SpeechSynthesisUtterance('');speechSynthesis.speak(u)}}
+function vPlayers(){
+  S=null;
+  set('<div class="grow"><h1 class="serif" style="font-size:44px">Who is playing?</h1><div id="pl"></div></div>'+
+   '<div class="bottom"><button id="add">+ Add player</button><button id="eat" class="primary">Let\'s eat</button></div>',function(){
+   var box=document.getElementById('pl');
+   ui.names.forEach(function(n,i){
+     var r=$('<div class="prow"><input type="text" aria-label="Player '+(i+1)+' name" value="'+esc(n)+'"><button aria-label="Remove player '+(i+1)+'">x</button></div>');
+     r.firstChild.oninput=function(){ui.names[i]=this.value};
+     r.lastChild.onclick=function(){if(ui.names.length>1){ui.names.splice(i,1);vPlayers()}};
+     box.appendChild(r)});
+   on('add',function(){if(ui.names.length<10){ui.names.push('Player '+(ui.names.length+1));vPlayers()}});
+   on('eat',function(){
+     var n=ui.names.map(function(x,i){return x.trim()||('Player '+(i+1))});
+     speechPrime();cfg.sudden=cfg.sudden;newGame(n);render()});
+  });
+}
+function vIntro(){
+  set('<div class="top"><span>The Great Gobble Bee</span></div><div class="grow center"><div style="height:8vh"></div><div class="small">LEVEL</div><div class="serif big" style="font-size:120px">'+S.level+'</div>'+
+   '<div class="serif name">'+LEVELS[S.level-1]+'</div><p>Each speller gets 2 words</p></div><div class="bottom"><button id="b" class="primary">Begin</button></div>',function(){
+   on('b',function(){S.turn=0;while(S.sudden&&curPlayer().out)S.turn++;go('turn');autoHear()})});
+}
+function autoHear(){setTimeout(function(){if(S&&S.screen==='turn')say(cur().word,.9)},250)}
+function vTurn(){
+  var w=cur(),p=curPlayer(),total=S.players.length*2,host=S.mode==='host';
+  var shown=ui.show==='def'?esc(w.definition):ui.show==='sen'?esc(w.example):ui.show==='pro'?'Say it like: '+esc(w.pronunciation):'';
+  set('<div class="top"><span>Level '+S.level+' of 5 · word '+(S.turn+1)+'/'+total+'</span><span>Score '+p.score+'</span></div>'+
+   '<div class="serif name center" style="margin:10px 0 4px;font-size:calc(40px*var(--s))">'+esc(p.name)+', you\'re up.</div>'+
+   '<div class="grow"></div>'+
+   '<div class="row"><button id="hear" class="hear" aria-label="Hear the word">&#128266; Hear the word</button><button id="slow" style="min-height:96px;flex:.5">Slow</button></div>'+
+   (shown?'<div class="card rise" id="txt">'+shown+'</div>':'')+
+   '<div class="row" style="margin-top:12px"><button id="def">Definition</button><button id="sen">Sentence</button></div>'+
+   '<div class="bottom">'+(host?
+     '<div class="row"><button id="wr" style="min-height:72px">Wrong</button><button id="ok" class="primary" style="min-height:72px">Correct</button></div>'+
+     '<button id="peek" class="ghost">'+(ui.peek?esc(w.word):'peek')+'</button>':
+     '<input id="ans" class="word" type="text" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" aria-label="Type the spelling"><button id="chk" class="primary">Check</button>')+'</div>',function(){
+   on('hear',function(){say(w.word,.9)});on('slow',function(){say(w.word,.55)});
+   on('def',function(){ui.show='def';say(w.definition,.9);vTurn()});
+   on('sen',function(){ui.show='sen';say(w.example,.9);vTurn()});
+   if(host){on('ok',function(){answer(true)});on('wr',function(){answer(false)});on('peek',function(){ui.peek=!ui.peek;vTurn()})}
+   else{var inp=document.getElementById('ans');
+     var chk=function(){answer(inp.value.trim().toLowerCase()===w.word.toLowerCase())};
+     on('chk',chk);inp.onkeydown=function(e){if(e.key==='Enter')chk()}}
+  });
+}
+function vResult(){
+  var L=S.last;
+  if(L.ok){
+    set('<div class="wash"><div class="serif big center">Yes! +'+L.pts+'</div></div>');
+  }else{
+    set('<div class="grow center"><div style="height:12vh"></div><div class="serif big">So close</div><p>The word is</p><div class="serif spell">'+esc(L.word.split('').join(' '))+'</div></div><div class="bottom"><button id="n" class="primary">Next</button></div>',function(){on('n',afterResult)});
+  }
+}
+function vEgg(){
+  var w=WORDS.filter(function(x){return x.word===S.last.word})[0];
+  set('<div class="grow center rise"><div style="height:10vh"></div><div class="small" style="letter-spacing:.15em;text-transform:uppercase">'+esc(w.theme)+'</div>'+
+   '<div class="serif big" style="margin:.2em 0">'+esc(w.word)+'</div><p style="font-size:1.25em">'+esc(w.easter_egg)+'</p></div><div class="bottom"><button id="n" class="primary">Ha! Next</button></div>',function(){on('n',nextTurn)});
+}
+function vLevelup(){
+  set('<div class="grow center"><div style="height:6vh"></div><div class="small">LEVEL '+S.level+' DONE</div><div class="serif big">Level '+(S.level+1)+': '+LEVELS[S.level]+'</div><div class="card" style="text-align:left">'+board()+'</div></div>'+
+   '<div class="bottom"><button id="n" class="primary">Next level</button></div>',function(){
+   on('n',function(){S.level++;S.turn=0;buildPool();go('intro')})});
+}
+function vEnd(){
+  var ps=S.players.slice().sort(function(a,b){return b.score-a.score});
+  var top=ps[0].score,wins=ps.filter(function(p){return p.score===top}).map(function(p){return p.name});
+  set('<div class="grow center"><div class="small" style="margin-top:4vh">WINNER</div><div class="serif big">'+esc(wins.join(' & '))+'</div>'+
+   '<div class="card" style="text-align:left">'+board()+'</div>'+
+   '<div class="card small" style="text-align:left">'+ps.map(function(p){return esc(p.name)+': best word '+(p.best?esc(p.best.word)+' (L'+p.best.level+')':'none')}).join('<br>')+'</div></div>'+
+   '<div class="bottom"><button id="again" class="primary">Play again (same players)</button><button id="new">New game</button></div>',function(){
+   on('again',function(){newGame(S.players.map(function(p){return p.name}));render()});
+   on('new',function(){localStorage.removeItem(KEY);ui.names=[];S=null;vStart()});
+  });
+  confetti();
+}
+function confetti(){
+  var c=['#e8b04a','#8e2a2a'];
+  for(var i=0;i<40;i++){var d=document.createElement('div');d.className='conf';
+    d.style.left=Math.random()*100+'vw';d.style.background=c[i%2];d.style.animationDelay=(Math.random()*.4)+'s';
+    document.body.appendChild(d);setTimeout(function(x){x.remove()},2100,d)}
+}
+if(!window.speechSynthesis){console.warn('speechSynthesis not available; text only')}
+vStart();
+</script></body></html>
