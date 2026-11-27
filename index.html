@@ -440,6 +440,7 @@ html body .small[style*="margin-top"]{margin-top:0!important}
 @media (min-width:1280px) and (orientation:landscape){html body .grow.center>h1::after{padding-top:90px!important;font-size:150px!important}}
 @media (min-width:1000px) and (orientation:landscape){html body #app,html body.tv #app{max-width:1100px!important}html body .grow.center>h1::after{font-size:120px!important;white-space:nowrap}html body .grow.center>h1::before{margin-bottom:64px!important}}
 html body .grow.center>h1::after{white-space:nowrap;font-size:min(120px,12vw)!important;line-height:1.3!important;padding:0!important}
+.buzzers>button{min-height:140px!important;font-size:34px!important}@media (orientation:portrait){.buzzers>button{min-height:110px!important}}
 </style></head><body>
 <div id="app"></div>
 <script id="words" type="application/json">{
@@ -894,7 +895,7 @@ var S=null;            // game state (persisted)
 var cfg={mode:'host',sudden:false,game:'teams'};
 var ui={show:'',peek:false,names:[],teams:null};   // transient
 var voice=null;
-var TV=/[?&]tv=1/.test(location.search)||(window.innerWidth>=1000&&window.innerWidth>window.innerHeight);
+var KEYS=matchMedia('(hover:hover) and (pointer:fine)').matches;var TV=/[?&]tv=1/.test(location.search)||(window.innerWidth>=1000&&window.innerWidth>window.innerHeight);
 if(TV)document.documentElement.className='tv';
 window.addEventListener('DOMContentLoaded',function(){document.body.className='tv'});
 function dots(n){var s='';for(var i=0;i<n;i++)s+='<i class="dot"></i>';return '<span class="dots" aria-label="'+n+' points">'+s+'</span>'}
@@ -983,7 +984,7 @@ function cAdvance(){
 }
 function bannerNext(){var t=S.banner.then;if(t==='round'){cRound();save();render()}else go(t)}
 function undo(){if(!S||!S.prev)return;S=S.prev;S.prev=null;ui.revealed=false;ui.show='';ui.peek=false;save();render()}
-function undoBtn(){return S&&S.prev?'<button id="undo" class="'+(S.screen==='turn'?'link':'ghost')+'">Undo last tap'+(TV?' (U)':'')+'</button>':''}
+function undoBtn(){return S&&S.prev?'<button id="undo" class="'+(S.screen==='turn'?'link':'ghost')+'">Undo last tap'+(KEYS?' (U)':'')+'</button>':''}
 function reveal(){ui.revealed=true;render()}
 function go(screen){ui.revealed=false;S.screen=screen;ui.show='';ui.peek=false;save();render()}
 
@@ -1094,11 +1095,11 @@ function vTurn(){
    '<div class="top"><span>Level '+S.level+' of 5 · word '+(S.turn+1)+'/'+total+'</span><span>Score '+p.score+'</span></div>';
   set('<div class="thead">'+head+
    (TV||classic()?board2():'')+'</div><div class="tmain"><div class="serif name center upname">'+esc(p.name)+', you\'re up.</div>'+
-   '<button id="hear" class="hear" aria-label="Hear the word">Hear the word'+(TV?' (space)':'')+'</button>'+
-   '<div class="startlinks"><button id="slow" class="link">Slower'+(TV?' (L)':'')+'</button><span class="dotsep">\u00B7</span><button id="def" class="link">Definition'+(TV?' (D)':'')+'</button><span class="dotsep">\u00B7</span><button id="sen" class="link">Sentence'+(TV?' (S)':'')+'</button></div>'+
+   '<button id="hear" class="hear" aria-label="Hear the word">Hear the word'+(KEYS?' (space)':'')+'</button>'+
+   '<div class="startlinks"><button id="slow" class="link">Slower'+(KEYS?' (L)':'')+'</button><span class="dotsep">\u00B7</span><button id="def" class="link">Definition'+(KEYS?' (D)':'')+'</button><span class="dotsep">\u00B7</span><button id="sen" class="link">Sentence'+(KEYS?' (S)':'')+'</button></div>'+
    '<div class="txtarea">'+(shown?'<div class="card rise" id="txt">'+shown+'</div>':'')+'</div></div>'+
    '<div class="bottom turnjudge">'+(host?
-     '<div class="row"><button id="ok" class="judge">Correct'+(TV?' (C)':'')+'</button><button id="wr" class="judge">Wrong'+(TV?' (W)':'')+'</button></div>':
+     '<div class="row"><button id="ok" class="judge">Correct'+(KEYS?' (C)':'')+'</button><button id="wr" class="judge">Wrong'+(KEYS?' (W)':'')+'</button></div>':
      '<input id="ans" class="word" type="text" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" aria-label="Type the spelling"><button id="chk" class="primary">Check</button>')+'</div>'+
    '<div class="corner">'+(host&&!TV?'<button id="peek" class="link">'+(ui.peek?esc(w.word):'Reveal word')+'</button>':'')+undoBtn()+'</div>',function(){
    on('hear',function(){say(w.word,.9)});on('slow',function(){say(w.word,.55)});
@@ -1199,14 +1200,14 @@ function vTTurn(){
   var shown=ui.show==='def'?esc(w.definition):ui.show==='sen'?esc(w.example):'';
   var status=ph==='listen'?'First to buzz spells it.':ph==='steal'?esc(tWho(S.steal))+' can steal. Buzz in.':esc(tWho(S.buzz))+(ph==='stealbuzzed'?' is stealing. Spell it.':' buzzed. Spell it.');
   var bz=function(i){var dis=ph==='steal'?i!==S.steal:ph!=='listen';var hot=S.buzz===i;
-    return '<button id="bz'+i+'" class="buzzer bz'+i+(hot?' hot':'')+'"'+(dis&&!hot?' disabled':'')+'><span>'+esc(S.teams[i].name)+'</span><b>'+(hot?'Buzzed':'Buzz')+'</b>'+(TV?'<small>'+(i?'L':'A')+'</small>':'')+'</button>'};
+    return '<button id="bz'+i+'" class="buzzer bz'+i+(hot?' hot':'')+'"'+(dis&&!hot?' disabled':'')+'><span>'+esc(S.teams[i].name)+'</span><b>'+(hot?'Buzzed':'Buzz')+'</b>'+(KEYS?'<small>'+(i?'L':'A')+'</small>':'')+'</button>'};
   set('<div class="thead"><div class="top"><span>Face-off '+(S.fo+1)+'</span><span>Level '+S.level+'</span></div>'+tScores()+'</div>'+
    '<div class="tmain"><div class="serif name center upname">'+esc(a)+' vs '+esc(b)+'</div>'+
-   '<button id="hear" class="hear" aria-label="Hear the word">Hear the word'+(TV?' (space)':'')+'</button>'+
-   '<div class="startlinks"><button id="slow" class="link">Slower</button><span class="dotsep">·</span><button id="def" class="link">Definition'+(TV?' (D)':'')+'</button><span class="dotsep">·</span><button id="sen" class="link">Sentence'+(TV?' (S)':'')+'</button></div>'+
+   '<button id="hear" class="hear" aria-label="Hear the word">Hear the word'+(KEYS?' (space)':'')+'</button>'+
+   '<div class="startlinks"><button id="slow" class="link">Slower</button><span class="dotsep">·</span><button id="def" class="link">Definition'+(KEYS?' (D)':'')+'</button><span class="dotsep">·</span><button id="sen" class="link">Sentence'+(KEYS?' (S)':'')+'</button></div>'+
    '<div class="txtarea">'+(shown?'<div class="card rise" id="txt">'+shown+'</div>':'')+'</div></div>'+
    '<div class="bottom turnjudge"><p class="tstatus" id="tstatus">'+status+'</p><div class="buzzers">'+bz(0)+bz(1)+'</div>'+
-   (S.buzz!==null?'<div class="row"><button id="ok" class="judge">Correct'+(TV?' (C)':'')+'</button><button id="wr" class="judge">Wrong'+(TV?' (W)':'')+'</button></div>':'')+'</div>'+
+   (S.buzz!==null?'<div class="row"><button id="ok" class="judge">Correct'+(KEYS?' (C)':'')+'</button><button id="wr" class="judge">Wrong'+(KEYS?' (W)':'')+'</button></div>':'')+'</div>'+
    '<div class="corner">'+(!TV?'<button id="peek" class="link">'+(ui.peek?esc(w.word):'Reveal word')+'</button>':'')+undoBtn()+'<button id="fin" class="link">Finish</button></div>',function(){
    on('hear',function(){say(w.word,.9)});on('slow',function(){say(w.word,.55)});
    on('def',function(){ui.show='def';say(w.definition,.9);vTTurn()});
