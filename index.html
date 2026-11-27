@@ -441,6 +441,7 @@ html body .small[style*="margin-top"]{margin-top:0!important}
 @media (min-width:1000px) and (orientation:landscape){html body #app,html body.tv #app{max-width:1100px!important}html body .grow.center>h1::after{font-size:120px!important;white-space:nowrap}html body .grow.center>h1::before{margin-bottom:64px!important}}
 html body .grow.center>h1::after{white-space:nowrap;font-size:min(120px,12vw)!important;line-height:1.3!important;padding:0!important}
 .buzzers>button{min-height:140px!important;font-size:34px!important}@media (orientation:portrait){.buzzers>button{min-height:110px!important}}
+.backlink{align-self:flex-start;margin:0 0 16px;padding:8px 0;font-size:15px;color:var(--mute);background:none;border:0}
 </style></head><body>
 <div id="app"></div>
 <script id="words" type="application/json">{
@@ -1024,6 +1025,7 @@ function render(){
   window.scrollTo(0,0);f();
   if(S&&S.prev)on('undo',undo);
 }
+window.addEventListener('popstate',function(){if(!S)vStart()});
 function vStart(){
   var saved=load();ui.startPage=true;
   set('<div class="grow center"><div style="height:8vh"></div><h1 class="serif"><span class="sr">Musso Family Olympics, Thanksgiving 2026. Spelling Bee</span></h1>'+
@@ -1067,9 +1069,9 @@ function vRules(){
 function speechPrime(){if(window.speechSynthesis){var u=new SpeechSynthesisUtterance('');speechSynthesis.speak(u)}}
 function vPlayers(){
   S=null;
-  set('<div class="grow"><h1 class="serif" style="font-size:44px">Who is playing?</h1><div id="pl"></div></div>'+
+  set('<div class="grow"><button id="bk" class="link backlink">‹ Back</button><h1 class="serif" style="font-size:44px">Who is playing?</h1><div id="pl"></div></div>'+
    '<div class="bottom"><button id="add">+ Add player</button><button id="eat" class="primary">Let\'s eat</button></div>',function(){
-   var box=document.getElementById('pl');
+   on('bk',vStart);try{history.pushState({s:'setup'},'')}catch(e){}var box=document.getElementById('pl');
    ui.names.forEach(function(n,i){
      var r=$('<div class="prow"><input type="text" aria-label="Player '+(i+1)+' name" value="'+esc(n)+'"><button aria-label="Remove player '+(i+1)+'">x</button></div>');
      r.firstChild.oninput=function(){ui.names[i]=this.value};
@@ -1152,10 +1154,10 @@ function vEnd(){
 function tDefault(){return [{name:'Team 1'},{name:'Team 2'}]}
 function vTeams(){
   S=null;if(!ui.teams)ui.teams=tDefault();
-  set('<div class="grow"><h1 class="serif">Name your teams</h1><div class="tcols">'+ui.teams.map(function(t,ti){return '<div class="tcol tc'+ti+'"><label class="small" for="tn'+ti+'">Team '+(ti+1)+'</label><input type="text" class="tname" id="tn'+ti+'" value="'+esc(t.name)+'"></div>'}).join('')+'</div>'+
+  set('<div class="grow"><button id="bk" class="link backlink">‹ Back</button><h1 class="serif">Name your teams</h1><div class="tcols">'+ui.teams.map(function(t,ti){return '<div class="tcol tc'+ti+'"><label class="small" for="tn'+ti+'">Team '+(ti+1)+'</label><input type="text" class="tname" id="tn'+ti+'" value="'+esc(t.name)+'"></div>'}).join('')+'</div>'+
    '<p class="thint">Each face-off, send the next person up from each team.</p></div>'+
    '<div class="bottom"><button id="eat" class="primary">Start</button></div>',function(){
-   [0,1].forEach(function(ti){document.getElementById('tn'+ti).oninput=function(){ui.teams[ti].name=this.value}});
+   on('bk',vStart);try{history.pushState({s:'setup'},'')}catch(e){}[0,1].forEach(function(ti){document.getElementById('tn'+ti).oninput=function(){ui.teams[ti].name=this.value}});
    on('eat',function(){
      var T=ui.teams.map(function(t,ti){return{name:t.name.trim()||('Team '+(ti+1)),score:0}});
      speechPrime();tNew(T);render();autoHear()});
