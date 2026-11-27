@@ -913,7 +913,16 @@ function pickVoice(){
   voice=v.filter(function(x){return x.lang==='en-US'||x.lang==='en_US'})[0]||v.filter(function(x){return /^en/.test(x.lang)})[0]||null;
 }
 if(window.speechSynthesis){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+var AU=new Audio();AU.preload='auto';AU.setAttribute('playsinline','');
+function audioKey(text,rate){for(var i=0;i<WORDS.length;i++){var x=WORDS[i],k=x.word.toLowerCase();
+  if(x.word===text)return k+(rate&&rate<.7?'-slow':'');if(x.definition===text)return k+'-def';if(x.example===text)return k+'-sen'}return null}
+function unlockAudio(){try{AU.src='audio/'+WORDS[0].word.toLowerCase()+'.mp3';AU.muted=true;var pr=AU.play();if(pr&&pr.then)pr.then(function(){AU.pause();AU.muted=false}).catch(function(){AU.muted=false})}catch(e){}}
 function say(text,rate){
+  var k=audioKey(text,rate);
+  if(k){try{if(window.speechSynthesis)speechSynthesis.cancel();AU.pause();AU.muted=false;AU.src='audio/'+k+'.mp3';AU.currentTime=0;var pr=AU.play();if(pr&&pr.catch)pr.catch(function(){sayTTS(text,rate)});return}catch(e){}}
+  sayTTS(text,rate);
+}
+function sayTTS(text,rate){
   if(!window.speechSynthesis)return;
   var ss=speechSynthesis;
   function go(){var u=new SpeechSynthesisUtterance(text);u.rate=rate||.9;u.lang='en-US';u.volume=1;if(voice)u.voice=voice;
@@ -1067,7 +1076,7 @@ function vRules(){
    '<p>Tapped the wrong button? Hit Undo last tap.</p></div></div>'+
    '<div class="bottom"><button id="back" class="primary">Got it</button></div>',function(){on('back',vStart)});
 }
-function speechPrime(){if(window.speechSynthesis){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}}}
+function speechPrime(){unlockAudio();if(window.speechSynthesis){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}}}
 function vPlayers(){
   S=null;
   set('<div class="grow"><button id="bk" class="link backlink">‹ Back</button><h1 class="serif" style="font-size:44px">Who is playing?</h1><div id="pl"></div></div>'+
