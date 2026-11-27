@@ -915,9 +915,10 @@ function pickVoice(){
 if(window.speechSynthesis){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
 function say(text,rate){
   if(!window.speechSynthesis)return;
-  speechSynthesis.cancel();
-  var u=new SpeechSynthesisUtterance(text);u.rate=rate||.9;u.lang='en-US';if(voice)u.voice=voice;
-  speechSynthesis.speak(u);
+  var ss=speechSynthesis;
+  function go(){var u=new SpeechSynthesisUtterance(text);u.rate=rate||.9;u.lang='en-US';u.volume=1;if(voice)u.voice=voice;
+    window.__lastUtt=u;ss.resume();ss.speak(u);}
+  if(ss.speaking||ss.pending){ss.cancel();setTimeout(go,120)}else{ss.resume();go()}
 }
 
 /* state */
@@ -1066,7 +1067,7 @@ function vRules(){
    '<p>Tapped the wrong button? Hit Undo last tap.</p></div></div>'+
    '<div class="bottom"><button id="back" class="primary">Got it</button></div>',function(){on('back',vStart)});
 }
-function speechPrime(){if(window.speechSynthesis){var u=new SpeechSynthesisUtterance('');speechSynthesis.speak(u)}}
+function speechPrime(){if(window.speechSynthesis){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}}}
 function vPlayers(){
   S=null;
   set('<div class="grow"><button id="bk" class="link backlink">‹ Back</button><h1 class="serif" style="font-size:44px">Who is playing?</h1><div id="pl"></div></div>'+
